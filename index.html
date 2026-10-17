@@ -1,0 +1,1042 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>freeshion* | Mặc đơn giản. Sống chất riêng.</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              olive: '#414D35',       /* Exact color of Top Bar and CTA Buttons */
+              oliveHover: '#333D2A',
+              oliveLight: '#D2D9CC',
+              beige: '#F5F3ED',       /* Exact Hero & Journal background color */
+              cardBeige: '#F3EFEB',
+              newsletter: '#EDEFEE',  /* Exact Newsletter background color */
+              footer: '#F9F9F5',      /* Exact Footer background color */
+              dark: '#1A1A1A',
+              subtext: '#666666',
+              borderMuted: '#EAE8E3',
+            }
+          }
+        }
+      }
+    }
+  </script>
+  
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      color: #1A1A1A;
+      background-color: #FFFFFF;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 5px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #d1d5db;
+      border-radius: 9999px;
+    }
+    @keyframes pulse-dot {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(1.15); opacity: 0.85; }
+    }
+    .hotspot-pulse {
+      animation: pulse-dot 2.5s infinite ease-in-out;
+    }
+  </style>
+</head>
+<body class="selection:bg-brand-olive selection:text-white">
+
+  <!-- ================= TOP NOTIFICATION BAR ================= -->
+  <!-- Exact background: #414D35, Text: #FFFFFF & #D2D9CC -->
+  <div class="bg-brand-olive text-white text-[11px] sm:text-xs py-2.5 px-4 tracking-wider">
+    <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-1 font-medium">
+      <div class="hidden md:block uppercase tracking-widest text-[#D2D9CC] text-[10px] sm:text-[11px]">
+        PHONG CÁCH TỰ DO • CHẤT RIÊNG CỦA BẠN
+      </div>
+      <div class="text-center font-normal">
+        Miễn phí vận chuyển cho đơn từ <span class="font-bold text-white">799k +</span>
+      </div>
+      <div class="flex items-center gap-1 hover:text-[#D2D9CC] transition-colors cursor-pointer text-[11px]">
+        <span>Theo dõi đơn hàng</span>
+        <i class="ph ph-arrow-right text-xs"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN NAVBAR ================= -->
+  <header class="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-[#F0EFEA] transition-all duration-300">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+      
+      <!-- Brand Logo -->
+      <div class="flex items-center gap-8">
+        <a href="#" class="text-2xl sm:text-[28px] font-extrabold tracking-tight text-brand-dark flex items-start group">
+          <span>freeshion</span>
+          <span class="text-base leading-none text-brand-dark group-hover:rotate-45 transition-transform duration-300 ml-0.5">*</span>
+        </a>
+      </div>
+
+      <!-- Navigation Links -->
+      <nav class="hidden lg:flex items-center gap-8 text-[14px] font-medium text-gray-700">
+        <a href="#hero" class="text-brand-dark font-semibold relative py-1 after:content-[''] after:absolute after:bottom-0 after:left-0 after:w-full after:h-[1.5px] after:bg-brand-dark">
+          Trang chủ
+        </a>
+        <div class="relative group cursor-pointer py-1 flex items-center gap-1 hover:text-brand-dark">
+          <span>Sản phẩm</span>
+          <i class="ph ph-caret-down text-[10px] transition-transform group-hover:rotate-180"></i>
+          <!-- Dropdown menu -->
+          <div class="absolute top-full left-0 w-48 bg-white border border-gray-100 shadow-xl rounded-xl p-2 hidden group-hover:block transition-all pt-3">
+            <a href="#categories" class="block px-3 py-2 rounded-lg text-xs hover:bg-gray-50 text-gray-700 hover:text-black">Áo sơ mi</a>
+            <a href="#categories" class="block px-3 py-2 rounded-lg text-xs hover:bg-gray-50 text-gray-700 hover:text-black">Áo polo</a>
+            <a href="#categories" class="block px-3 py-2 rounded-lg text-xs hover:bg-gray-50 text-gray-700 hover:text-black">Quần dài</a>
+            <a href="#categories" class="block px-3 py-2 rounded-lg text-xs hover:bg-gray-50 text-gray-700 hover:text-black">Áo khoác</a>
+          </div>
+        </div>
+        <a href="#products" class="hover:text-brand-dark flex items-center gap-0.5 transition-colors">
+          <span>Hàng mới</span>
+          <span class="text-xs text-brand-olive font-bold">*</span>
+        </a>
+        <a href="#products" class="hover:text-brand-dark transition-colors">Ưu đãi</a>
+        <a href="#journal" class="hover:text-brand-dark flex items-center gap-0.5 transition-colors">
+          <span>Gợi ý outfit</span>
+          <span class="text-xs text-brand-olive font-bold">*</span>
+        </a>
+      </nav>
+
+      <!-- Right Action Icons -->
+      <div class="flex items-center gap-3 sm:gap-5 text-gray-700">
+        <!-- Search icon -->
+        <button id="searchBtn" class="p-2 hover:text-black hover:bg-gray-100 rounded-full transition-colors" title="Tìm kiếm">
+          <i class="ph ph-magnifying-glass text-xl"></i>
+        </button>
+
+        <!-- Wishlist -->
+        <button id="wishlistBtn" class="p-2 hover:text-black hover:bg-gray-100 rounded-full transition-colors relative" title="Yêu thích">
+          <i class="ph ph-heart text-xl"></i>
+          <span id="wishlistCount" class="absolute -top-1 -right-1 bg-brand-olive text-white text-[10px] w-4 h-4 rounded-full flex items-center justify-center font-bold hidden">0</span>
+        </button>
+
+        <!-- Account / Admin Link -->
+        <a href="admin.html" target="_blank" class="p-2 hover:text-black hover:bg-gray-100 rounded-full transition-colors hidden sm:flex items-center gap-1.5 text-xs font-semibold text-gray-700" title="Vào trang quản trị (Admin Workspace)">
+          <i class="ph ph-user text-lg"></i>
+          <span class="text-[11px] font-medium text-gray-500">Admin</span>
+        </a>
+
+        <!-- Cart Button -->
+        <button id="cartBtn" class="flex items-center gap-2 py-2 px-3.5 rounded-full border border-gray-200 hover:border-gray-300 hover:bg-gray-50 text-brand-dark text-xs font-semibold transition-all">
+          <i class="ph ph-bag text-base"></i>
+          <span class="hidden sm:inline">Giỏ hàng</span>
+          <span id="cartCount" class="font-bold ml-0.5">0</span>
+        </button>
+
+        <!-- Mobile Menu Toggle -->
+        <button id="mobileMenuBtn" class="lg:hidden p-2 text-gray-800 hover:bg-gray-100 rounded-lg">
+          <i class="ph ph-list text-2xl"></i>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Drawer / Menu -->
+    <div id="mobileMenu" class="hidden lg:hidden bg-white border-b border-gray-200 px-6 py-5 space-y-4">
+      <a href="#hero" class="block text-base font-semibold text-brand-dark py-1">Trang chủ</a>
+      <a href="#categories" class="block text-base text-gray-700 hover:text-black py-1">Danh mục sản phẩm</a>
+      <a href="#products" class="block text-base text-gray-700 hover:text-black py-1">Hàng mới *</a>
+      <a href="#products" class="block text-base text-gray-700 hover:text-black py-1">Ưu đãi</a>
+      <a href="#journal" class="block text-base text-gray-700 hover:text-black py-1">Gợi ý outfit *</a>
+      <div class="pt-3 border-t border-gray-100 flex items-center gap-4 text-xs text-gray-600">
+        <span class="flex items-center gap-1.5"><i class="ph ph-user"></i> Tài khoản</span>
+        <span class="flex items-center gap-1.5"><i class="ph ph-clock"></i> 09:00 - 21:30</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- ================= HERO SECTION ================= -->
+  <!-- Background: #F5F3ED (Exact color from original design) -->
+  <section id="hero" class="bg-brand-beige overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 lg:py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        
+        <!-- Left Hero Content (7 cols) -->
+        <div class="lg:col-span-6 xl:col-span-7 flex flex-col justify-center space-y-6 sm:space-y-8 pr-0 lg:pr-6">
+          
+          <div class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-wider text-gray-500 uppercase">
+            <span class="w-2 h-2 rounded-full bg-brand-olive"></span>
+            <span>THE EVERYDAY COLLECTION | 2024</span>
+          </div>
+
+          <h1 class="text-4xl sm:text-6xl xl:text-[68px] font-extrabold tracking-tight text-brand-dark leading-[1.08]">
+            Mặc đơn giản.<br>
+            Sống chất riêng.
+          </h1>
+
+          <p class="text-sm sm:text-base text-gray-600 max-w-lg leading-relaxed font-normal">
+            Không cần cầu kỳ để trở nên khác biệt.<br class="hidden sm:inline">
+            Những thiết kế dành cho bạn, trong mọi khoảnh khắc.
+          </p>
+
+          <div class="pt-2 flex flex-wrap items-center gap-4">
+            <!-- Exact CTA Button Color: #414D35 -->
+            <a href="#products" class="inline-flex items-center justify-center gap-2.5 bg-brand-olive hover:bg-brand-oliveHover text-white px-7 py-3.5 rounded-xl text-xs sm:text-sm font-semibold tracking-wide shadow-sm hover:shadow-md transition-all duration-200 transform hover:-translate-y-0.5">
+              <span>Khám phá bộ sưu tập</span>
+              <i class="ph ph-arrow-up-right text-base"></i>
+            </a>
+          </div>
+
+          <!-- Social Proof / Customer Reviews -->
+          <div class="pt-4 border-t border-[#E5E2D9] flex items-center gap-3.5">
+            <div class="flex -space-x-2.5 overflow-hidden">
+              <img class="inline-block h-9 w-9 rounded-full ring-2 ring-brand-beige object-cover" src="assets/images/cat_polo.jpg" alt="Customer 1">
+              <img class="inline-block h-9 w-9 rounded-full ring-2 ring-brand-beige object-cover" src="assets/images/cat_so_mi.jpg" alt="Customer 2">
+              <img class="inline-block h-9 w-9 rounded-full ring-2 ring-brand-beige object-cover" src="assets/images/hero_model.jpg" alt="Customer 3">
+            </div>
+            <div>
+              <div class="flex items-center gap-1 text-[#657356] text-xs">
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <i class="ph-fill ph-star"></i>
+                <span class="text-brand-dark font-bold ml-1 text-xs">4.9/5</span>
+              </div>
+              <p class="text-[11px] sm:text-xs text-gray-500 font-medium mt-0.5">
+                Được tin dùng bởi hơn <span class="text-brand-dark font-semibold">10.000+</span> khách hàng
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Right Hero Image with Authentic Image & Interactive Hotspot -->
+        <div class="lg:col-span-6 xl:col-span-5 relative">
+          <div class="relative mx-auto max-w-md lg:max-w-none rounded-2xl overflow-hidden shadow-xl bg-stone-300">
+            
+            <!-- Authentic Model Image cropped directly from original mockup -->
+            <img 
+              src="assets/images/hero_model.jpg" 
+              alt="Freeshion Central Station Lookbook Model" 
+              class="w-full h-auto object-cover object-top hover:scale-[1.02] transition-transform duration-700 ease-out"
+            >
+
+            <!-- Interactive Hotspot Box -->
+            <div class="absolute bottom-6 right-4 sm:right-6 z-20 group">
+              <div class="flex items-center bg-white/95 backdrop-blur-md rounded-xl p-2.5 sm:p-3 shadow-xl border border-gray-100 hover:shadow-2xl transition-all duration-300">
+                <button class="w-8 h-8 rounded-full bg-brand-olive text-white flex items-center justify-center mr-3 flex-shrink-0 hotspot-pulse" title="Xem sản phẩm">
+                  <i class="ph ph-plus font-bold text-sm"></i>
+                </button>
+                <div class="text-left pr-3">
+                  <h4 class="text-xs sm:text-sm font-bold text-brand-dark leading-tight">Utility Jacket</h4>
+                  <p class="text-xs font-semibold text-gray-600 mt-0.5">899.000đ</p>
+                </div>
+                <button onclick="addToCart('Utility Jacket', 899000, 'assets/images/hero_model.jpg')" class="w-8 h-8 rounded-lg bg-gray-100 hover:bg-brand-olive hover:text-white flex items-center justify-center transition-colors">
+                  <i class="ph ph-arrow-right text-xs"></i>
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= VALUE PROPOSITIONS BAR ================= -->
+  <!-- Background: White, 4 Service Points -->
+  <section class="border-y border-[#ECEBE6] bg-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 lg:gap-8">
+        
+        <!-- Prop 1 -->
+        <div class="flex items-start gap-3 sm:gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-brand-olive flex-shrink-0 border border-gray-100">
+            <i class="ph ph-truck text-xl"></i>
+          </div>
+          <div>
+            <h4 class="text-xs sm:text-sm font-bold text-brand-dark">Giao hàng toàn quốc</h4>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Nhanh chóng trong 24-48h</p>
+          </div>
+        </div>
+
+        <!-- Prop 2 -->
+        <div class="flex items-start gap-3 sm:gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-brand-olive flex-shrink-0 border border-gray-100">
+            <i class="ph ph-arrows-clockwise text-xl"></i>
+          </div>
+          <div>
+            <h4 class="text-xs sm:text-sm font-bold text-brand-dark">Đổi trả dễ dàng</h4>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Trong vòng 30 ngày</p>
+          </div>
+        </div>
+
+        <!-- Prop 3 -->
+        <div class="flex items-start gap-3 sm:gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-brand-olive flex-shrink-0 border border-gray-100">
+            <i class="ph ph-shield-check text-xl"></i>
+          </div>
+          <div>
+            <h4 class="text-xs sm:text-sm font-bold text-brand-dark">Chất lượng cam kết</h4>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Chỉn chu từng đường may</p>
+          </div>
+        </div>
+
+        <!-- Prop 4 -->
+        <div class="flex items-start gap-3 sm:gap-4">
+          <div class="w-10 h-10 rounded-xl bg-gray-50 flex items-center justify-center text-brand-olive flex-shrink-0 border border-gray-100">
+            <i class="ph ph-lock-simple text-xl"></i>
+          </div>
+          <div>
+            <h4 class="text-xs sm:text-sm font-bold text-brand-dark">Mua sắm an tâm</h4>
+            <p class="text-[11px] sm:text-xs text-gray-500 mt-0.5">Bảo mật thanh toán 100%</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= CATEGORIES SECTION ================= -->
+  <!-- "TỦ ĐỒ CỦA BẠN, THEO CÁCH CỦA BẠN" - "Bắt đầu từ điều cơ bản." -->
+  <section id="categories" class="py-16 sm:py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-10 pb-4 border-b border-gray-200/80 gap-4">
+        <div>
+          <span class="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-gray-500">TỦ ĐỒ CỦA BẠN, THEO CÁCH CỦA BẠN</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark mt-1">Bắt đầu từ điều cơ bản.</h2>
+        </div>
+        <a href="#products" class="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-dark hover:text-brand-olive transition-colors group">
+          <span>Khám phá tất cả</span>
+          <i class="ph ph-arrow-up-right group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+        </a>
+      </div>
+
+      <!-- Categories 4-Column Grid with Authentic Images -->
+      <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+        
+        <!-- Category Card 1: Áo sơ mi -->
+        <div class="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+          <img 
+            src="assets/images/cat_so_mi.jpg" 
+            alt="Áo sơ mi" 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+          >
+        </div>
+
+        <!-- Category Card 2: Áo polo -->
+        <div class="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+          <img 
+            src="assets/images/cat_polo.jpg" 
+            alt="Áo polo" 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+          >
+        </div>
+
+        <!-- Category Card 3: Quần dài -->
+        <div class="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+          <img 
+            src="assets/images/cat_quan_dai.jpg" 
+            alt="Quần dài" 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+          >
+        </div>
+
+        <!-- Category Card 4: Áo khoác -->
+        <div class="group relative rounded-2xl overflow-hidden aspect-[3/4] bg-neutral-200 cursor-pointer shadow-sm hover:shadow-xl transition-all duration-300">
+          <img 
+            src="assets/images/cat_ao_khoac.jpg" 
+            alt="Áo khoác" 
+            class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700"
+          >
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= FEATURED PRODUCTS SECTION ================= -->
+  <!-- "ĐƯỢC CHỌN NHIỀU, ĐƯỢC YÊU LÂU" - "Những lựa chọn xứng đáng." -->
+  <section id="products" class="py-16 sm:py-20 bg-white border-t border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Section Header -->
+      <div class="flex flex-col sm:flex-row sm:items-end justify-between mb-8 pb-4 border-b border-gray-200 gap-4">
+        <div>
+          <span class="text-[11px] sm:text-xs font-semibold tracking-wider uppercase text-gray-500">ĐƯỢC CHỌN NHIỀU, ĐƯỢC YÊU LÂU</span>
+          <h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark mt-1">Những lựa chọn xứng đáng.</h2>
+        </div>
+        <a href="#products" class="inline-flex items-center gap-1 text-xs sm:text-sm font-semibold text-brand-dark hover:text-brand-olive transition-colors group">
+          <span>Xem tất cả sản phẩm</span>
+          <i class="ph ph-arrow-up-right group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform"></i>
+        </a>
+      </div>
+
+      <!-- Filter Tabs Bar -->
+      <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 md:pb-0 scrollbar-none">
+          <button class="filter-tab active px-4 py-1.5 rounded-full text-xs font-semibold bg-brand-dark text-white transition-colors" data-filter="all">
+            Bán chạy nhất
+          </button>
+          <button class="filter-tab px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-filter="new">
+            Hàng mới
+          </button>
+          <button class="filter-tab px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-filter="shirt">
+            Áo sơ mi
+          </button>
+          <button class="filter-tab px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-filter="polo">
+            Áo polo
+          </button>
+          <button class="filter-tab px-4 py-1.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-700 hover:bg-gray-200 transition-colors" data-filter="pants">
+            Quần dài
+          </button>
+        </div>
+        <p class="text-xs text-gray-400 font-normal hidden md:block">
+          Những món đồ không thể thiếu trong tủ đồ của bạn
+        </p>
+      </div>
+
+      <!-- Products Grid (4 items exactly as in screenshot) -->
+      <div id="productGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Product 1: Sơ mi Linen Essential -->
+        <div class="product-card group flex flex-col justify-between" data-category="shirt all">
+          <div class="relative rounded-xl overflow-hidden aspect-[4/5] bg-stone-100 shadow-sm border border-gray-100">
+            <!-- Authentic Product Image -->
+            <img 
+              src="assets/images/prod_so_mi_linen.jpg" 
+              alt="Sơ mi Linen Essential" 
+              class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            >
+            <!-- Quick Add Button Overlay -->
+            <div class="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button onclick="addToCart('Sơ mi Linen Essential', 549000, 'assets/images/prod_so_mi_linen.jpg')" class="w-full bg-brand-olive hover:bg-brand-oliveHover text-white text-xs font-semibold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-colors">
+                <i class="ph ph-bag-simple"></i>
+                <span>Thêm vào giỏ hàng</span>
+              </button>
+            </div>
+          </div>
+          <!-- Info -->
+          <div class="pt-3 pb-1">
+            <h3 class="text-xs sm:text-sm font-medium text-brand-dark group-hover:text-black transition-colors">Sơ mi Linen Essential</h3>
+            <div class="flex items-center justify-between mt-2">
+              <!-- Color swatches dots -->
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#E5E0D8] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1A1A1A] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#C2D4E0] inline-block"></span>
+              </div>
+              <!-- Price -->
+              <span class="text-xs sm:text-sm font-bold text-brand-dark">549.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 2: Polo Cotton Signature -->
+        <div class="product-card group flex flex-col justify-between" data-category="polo all new">
+          <div class="relative rounded-xl overflow-hidden aspect-[4/5] bg-stone-100 shadow-sm border border-gray-100">
+            <!-- Authentic Product Image -->
+            <img 
+              src="assets/images/prod_polo_cotton.jpg" 
+              alt="Polo Cotton Signature" 
+              class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            >
+            <!-- Quick Add Button Overlay -->
+            <div class="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button onclick="addToCart('Polo Cotton Signature', 399000, 'assets/images/prod_polo_cotton.jpg')" class="w-full bg-brand-olive hover:bg-brand-oliveHover text-white text-xs font-semibold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-colors">
+                <i class="ph ph-bag-simple"></i>
+                <span>Thêm vào giỏ hàng</span>
+              </button>
+            </div>
+          </div>
+          <!-- Info -->
+          <div class="pt-3 pb-1">
+            <h3 class="text-xs sm:text-sm font-medium text-brand-dark group-hover:text-black transition-colors">Polo Cotton Signature</h3>
+            <div class="flex items-center justify-between mt-2">
+              <!-- Color swatches dots -->
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#949F8E] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#1A1A1A] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#ECECEC] inline-block"></span>
+              </div>
+              <!-- Price -->
+              <span class="text-xs sm:text-sm font-bold text-brand-dark">399.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 3: Sơ mi Oxford Relaxed -->
+        <div class="product-card group flex flex-col justify-between" data-category="shirt all">
+          <div class="relative rounded-xl overflow-hidden aspect-[4/5] bg-stone-100 shadow-sm border border-gray-100">
+            <!-- Authentic Product Image -->
+            <img 
+              src="assets/images/prod_so_mi_oxford.jpg" 
+              alt="Sơ mi Oxford Relaxed" 
+              class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            >
+            <!-- Quick Add Button Overlay -->
+            <div class="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button onclick="addToCart('Sơ mi Oxford Relaxed', 599000, 'assets/images/prod_so_mi_oxford.jpg')" class="w-full bg-brand-olive hover:bg-brand-oliveHover text-white text-xs font-semibold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-colors">
+                <i class="ph ph-bag-simple"></i>
+                <span>Thêm vào giỏ hàng</span>
+              </button>
+            </div>
+          </div>
+          <!-- Info -->
+          <div class="pt-3 pb-1">
+            <h3 class="text-xs sm:text-sm font-medium text-brand-dark group-hover:text-black transition-colors">Sơ mi Oxford Relaxed</h3>
+            <div class="flex items-center justify-between mt-2">
+              <!-- Color swatches dots -->
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#9FB7C9] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#FFFFFF] border border-gray-300 inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#333333] inline-block"></span>
+              </div>
+              <!-- Price -->
+              <span class="text-xs sm:text-sm font-bold text-brand-dark">599.000đ</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Product 4: Quần Chino Daily -->
+        <div class="product-card group flex flex-col justify-between" data-category="pants all">
+          <div class="relative rounded-xl overflow-hidden aspect-[4/5] bg-stone-100 shadow-sm border border-gray-100">
+            <!-- Authentic Product Image -->
+            <img 
+              src="assets/images/prod_quan_chino.jpg" 
+              alt="Quần Chino Daily" 
+              class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+            >
+            <!-- Quick Add Button Overlay -->
+            <div class="absolute bottom-3 inset-x-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+              <button onclick="addToCart('Quần Chino Daily', 649000, 'assets/images/prod_quan_chino.jpg')" class="w-full bg-brand-olive hover:bg-brand-oliveHover text-white text-xs font-semibold py-2.5 rounded-xl shadow-lg flex items-center justify-center gap-1.5 transition-colors">
+                <i class="ph ph-bag-simple"></i>
+                <span>Thêm vào giỏ hàng</span>
+              </button>
+            </div>
+          </div>
+          <!-- Info -->
+          <div class="pt-3 pb-1">
+            <h3 class="text-xs sm:text-sm font-medium text-brand-dark group-hover:text-black transition-colors">Quần Chino Daily</h3>
+            <div class="flex items-center justify-between mt-2">
+              <!-- Color swatches dots -->
+              <div class="flex items-center gap-1.5">
+                <span class="w-2.5 h-2.5 rounded-full bg-[#C2B69D] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#202020] inline-block"></span>
+                <span class="w-2.5 h-2.5 rounded-full bg-[#5A6472] inline-block"></span>
+              </div>
+              <!-- Price -->
+              <span class="text-xs sm:text-sm font-bold text-brand-dark">649.000đ</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+  <!-- ================= JOURNAL / EDITORIAL STORY SECTION ================= -->
+  <!-- Authentic Split Section with Model Left & Warm Beige Right Box -->
+  <section id="journal" class="py-16 sm:py-24 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 rounded-3xl overflow-hidden shadow-sm border border-[#E8E6DF] bg-white">
+        
+        <!-- Story Image (Left 7 cols) with authentic cropped image -->
+        <div class="lg:col-span-7 relative overflow-hidden bg-stone-200">
+          <img 
+            src="assets/images/journal_model.jpg" 
+            alt="Freeshion Journal Editorial Model" 
+            class="w-full h-full object-cover object-center hover:scale-[1.02] transition-transform duration-700"
+          >
+        </div>
+
+        <!-- Story Content (Right 5 cols) - Exact Color: #F5F3ED -->
+        <div class="lg:col-span-5 bg-brand-beige p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+          <span class="text-[11px] font-semibold tracking-widest uppercase text-gray-500 mb-3">
+            FREESHION JOURNAL / 01
+          </span>
+          <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-brand-dark leading-tight mb-4">
+            Ít hơn một chút.<br>
+            Là mình nhiều hơn.
+          </h2>
+          <p class="text-xs sm:text-sm text-gray-600 leading-relaxed font-normal mb-8">
+            Một chiếc áo vừa vặn, một chất liệu dễ chịu, một sự tự tin toát ra từ bên trong. Chúng tôi tạo ra phong cách bắt đầu từ những điều giản đơn như thế.
+          </p>
+          <div>
+            <!-- Exact CTA Color: #414D35 -->
+            <a href="#products" class="inline-flex items-center gap-2 bg-brand-olive hover:bg-brand-oliveHover text-white px-7 py-3.5 rounded-xl text-xs sm:text-sm font-semibold tracking-wide transition-all transform hover:-translate-y-0.5 shadow-sm">
+              <span>Tìm cảm hứng phối đồ</span>
+              <i class="ph ph-arrow-up-right text-base"></i>
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= NEWSLETTER SECTION ================= -->
+  <!-- Exact background: #EDEFEE -->
+  <section class="py-14 sm:py-16 bg-brand-newsletter border-y border-[#E2E4DE]">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        
+        <!-- Text Left -->
+        <div class="lg:col-span-7 space-y-2">
+          <span class="text-[11px] font-semibold tracking-widest uppercase text-gray-600">STAY IN THE KNOW</span>
+          <h3 class="text-2xl sm:text-3xl font-bold tracking-tight text-brand-dark">
+            Một chút cảm hứng. Một chút đặc quyền.
+          </h3>
+          <p class="text-xs sm:text-sm text-gray-600">
+            Nhận thông báo về bộ sưu tập mới và ưu đãi đặc quyền từ Freeshion.
+          </p>
+        </div>
+
+        <!-- Form Right -->
+        <div class="lg:col-span-5">
+          <form onsubmit="handleNewsletter(event)" class="relative flex items-center">
+            <input 
+              type="email" 
+              required 
+              id="newsletterEmail"
+              placeholder="Địa chỉ email của bạn" 
+              class="w-full bg-white text-gray-900 placeholder-gray-400 text-xs sm:text-sm px-5 py-3.5 pr-14 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-brand-olive shadow-sm"
+            >
+            <button 
+              type="submit" 
+              class="absolute right-1.5 w-10 h-10 rounded-full bg-brand-dark hover:bg-black text-white flex items-center justify-center transition-colors shadow"
+              title="Đăng ký"
+            >
+              <i class="ph ph-arrow-right font-bold text-sm"></i>
+            </button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= FOOTER ================= -->
+  <!-- Exact background: #F9F9F5 -->
+  <footer class="bg-brand-footer pt-16 pb-12 border-t border-gray-200 text-gray-600 text-xs sm:text-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      
+      <!-- Top 4 Columns -->
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-gray-200">
+        
+        <!-- Brand column (2 cols on lg) -->
+        <div class="lg:col-span-2 space-y-4 pr-0 lg:pr-8">
+          <a href="#" class="text-2xl font-extrabold tracking-tight text-brand-dark flex items-start">
+            <span>freeshion</span>
+            <span class="text-base text-brand-dark ml-0.5">*</span>
+          </a>
+          <p class="text-xs text-gray-500 leading-relaxed max-w-sm">
+            Nền tảng thời trang nam hiện đại với phong cách tối giản.
+          </p>
+          <div class="flex items-center gap-3 pt-2">
+            <a href="#" class="inline-flex items-center gap-1 text-[11px] font-semibold text-black uppercase tracking-wider hover:opacity-75">
+              <span>FACEBOOK</span>
+              <i class="ph ph-arrow-up-right text-[10px]"></i>
+            </a>
+            <span class="text-gray-300">•</span>
+            <a href="#" class="inline-flex items-center gap-1 text-[11px] font-semibold text-black uppercase tracking-wider hover:opacity-75">
+              <span>INSTAGRAM</span>
+              <i class="ph ph-arrow-up-right text-[10px]"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Links Col 1: Khám phá -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-black mb-4">KHÁM PHÁ</h4>
+          <ul class="space-y-2.5 text-xs text-gray-600">
+            <li><a href="#products" class="hover:text-black transition-colors">Tất cả sản phẩm</a></li>
+            <li><a href="#products" class="hover:text-black transition-colors">Bộ sưu tập mới</a></li>
+            <li><a href="#journal" class="hover:text-black transition-colors">Gợi ý outfit</a></li>
+            <li><a href="#products" class="hover:text-black transition-colors">Ưu đãi dành cho bạn</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Col 2: Chúng tôi luôn ở đây -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-black mb-4">CHÚNG TÔI LUÔN Ở ĐÂY</h4>
+          <ul class="space-y-2.5 text-xs text-gray-600">
+            <li><a href="#" class="hover:text-black transition-colors">Chính sách đổi trả</a></li>
+            <li><a href="#" class="hover:text-black transition-colors">Hướng dẫn chọn size</a></li>
+            <li><a href="#" class="hover:text-black transition-colors">Theo dõi đơn hàng</a></li>
+            <li><a href="#" class="hover:text-black transition-colors">Liên hệ & hỗ trợ</a></li>
+          </ul>
+        </div>
+
+        <!-- Links Col 3: Ghé Freeshion -->
+        <div>
+          <h4 class="text-xs font-bold uppercase tracking-wider text-black mb-4">GHÉ FREESHION</h4>
+          <ul class="space-y-2.5 text-xs text-gray-600">
+            <li class="flex items-start gap-2">
+              <i class="ph ph-map-pin text-sm text-black mt-0.5"></i>
+              <span>28 Tràng Tiền, Hoàn Kiếm, Hà Nội</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="ph ph-phone text-sm text-black"></i>
+              <span>0983 888 999</span>
+            </li>
+            <li class="flex items-center gap-2">
+              <i class="ph ph-envelope-simple text-sm text-black"></i>
+              <span>freeshion.space@gmail.com</span>
+            </li>
+            <li class="flex items-center gap-2 text-gray-500">
+              <i class="ph ph-clock text-sm text-black"></i>
+              <span>09:00 - 21:30 hàng ngày</span>
+            </li>
+          </ul>
+        </div>
+
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="pt-8 flex flex-col sm:flex-row justify-between items-center text-xs text-gray-500 gap-4">
+        <div>
+          © 2024 Freeshion. All rights reserved.
+        </div>
+        <div class="flex items-center gap-6">
+          <a href="admin.html" target="_blank" class="text-admin-olive font-bold hover:underline">Trang quản trị (Admin)</a>
+          <a href="#" class="hover:text-black transition-colors">Chính sách bảo mật</a>
+          <a href="#" class="hover:text-black transition-colors">Điều khoản dịch vụ</a>
+          <a href="#" class="hover:text-black transition-colors">Sitemap</a>
+        </div>
+      </div>
+
+    </div>
+  </footer>
+
+  <!-- ================= CART DRAWER (SIDE OVERLAY) ================= -->
+  <div id="cartDrawerBackdrop" class="fixed inset-0 bg-black/50 z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+  <aside id="cartDrawer" class="fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 flex flex-col">
+    <!-- Drawer Header -->
+    <div class="p-5 border-b border-gray-200 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <i class="ph ph-bag text-xl font-bold"></i>
+        <h3 class="text-base font-bold text-black">Giỏ hàng của bạn</h3>
+        <span id="drawerCartCount" class="text-xs bg-gray-100 text-gray-800 font-bold px-2 py-0.5 rounded-full">(0)</span>
+      </div>
+      <button id="closeCartBtn" class="p-2 text-gray-500 hover:text-black rounded-lg hover:bg-gray-100 transition-colors">
+        <i class="ph ph-x text-lg"></i>
+      </button>
+    </div>
+
+    <!-- Free Ship Progress Bar -->
+    <div class="px-5 py-3 bg-[#FAF8F5] border-b border-gray-200 text-xs">
+      <div class="flex justify-between font-semibold text-gray-700 mb-1">
+        <span id="shipProgressText">Thêm sản phẩm để được freeship</span>
+        <span id="shipAmountNeeded">799.000đ</span>
+      </div>
+      <div class="w-full bg-gray-200 rounded-full h-1.5 overflow-hidden">
+        <div id="shipProgressBar" class="bg-brand-olive h-1.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+      </div>
+    </div>
+
+    <!-- Items List -->
+    <div id="cartItemList" class="flex-1 overflow-y-auto p-5 space-y-4 custom-scroll">
+      <!-- Empty State -->
+      <div id="emptyCartView" class="h-full flex flex-col items-center justify-center text-center py-12 text-gray-400">
+        <div class="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center text-gray-400 mb-3">
+          <i class="ph ph-bag-simple text-3xl"></i>
+        </div>
+        <p class="text-sm font-semibold text-gray-700">Giỏ hàng đang trống</p>
+        <p class="text-xs text-gray-400 mt-1 max-w-xs">Hãy chọn những món đồ bạn yêu thích để bắt đầu mua sắm.</p>
+        <button onclick="closeCart()" class="mt-4 px-5 py-2 bg-brand-olive text-white text-xs font-semibold rounded-lg hover:bg-brand-oliveHover">
+          Khám phá ngay
+        </button>
+      </div>
+    </div>
+
+    <!-- Drawer Footer -->
+    <div id="cartFooter" class="p-5 border-t border-gray-200 bg-white space-y-3">
+      <div class="flex justify-between items-center text-sm">
+        <span class="text-gray-500 font-medium">Tạm tính:</span>
+        <span id="cartSubtotal" class="text-base font-bold text-black">0đ</span>
+      </div>
+      <button onclick="handleCheckout()" class="w-full bg-brand-olive hover:bg-brand-oliveHover text-white py-3.5 rounded-xl font-bold text-sm tracking-wide transition-colors flex items-center justify-center gap-2">
+        <span>Tiến hành thanh toán</span>
+        <i class="ph ph-arrow-right"></i>
+      </button>
+      <p class="text-center text-[11px] text-gray-400">
+        Đổi trả trong 30 ngày • Thanh toán khi nhận hàng (COD)
+      </p>
+    </div>
+  </aside>
+
+  <!-- ================= SEARCH MODAL ================= -->
+  <div id="searchModal" class="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300 flex items-start justify-center pt-24 px-4">
+    <div class="bg-white w-full max-w-2xl rounded-2xl shadow-2xl p-6 transform scale-95 transition-transform duration-300">
+      <div class="flex items-center justify-between pb-4 border-b border-gray-200">
+        <div class="flex items-center gap-3 flex-1 mr-4">
+          <i class="ph ph-magnifying-glass text-xl text-gray-400"></i>
+          <input 
+            type="text" 
+            id="searchInput"
+            placeholder="Tìm kiếm áo sơ mi, polo, quần dài, áo khoác..." 
+            class="w-full text-base outline-none text-black placeholder-gray-400"
+          >
+        </div>
+        <button id="closeSearchBtn" class="p-1 text-gray-400 hover:text-black rounded-lg">
+          <i class="ph ph-x text-xl"></i>
+        </button>
+      </div>
+      <div class="pt-4">
+        <p class="text-xs font-semibold uppercase tracking-wider text-gray-400 mb-2">Tìm kiếm phổ biến</p>
+        <div class="flex flex-wrap gap-2">
+          <span class="px-3 py-1 bg-gray-100 hover:bg-brand-olive hover:text-white rounded-full text-xs cursor-pointer transition-colors" onclick="searchFor('Sơ mi Linen Essential')">Sơ mi Linen Essential</span>
+          <span class="px-3 py-1 bg-gray-100 hover:bg-brand-olive hover:text-white rounded-full text-xs cursor-pointer transition-colors" onclick="searchFor('Polo Cotton Signature')">Polo Cotton Signature</span>
+          <span class="px-3 py-1 bg-gray-100 hover:bg-brand-olive hover:text-white rounded-full text-xs cursor-pointer transition-colors" onclick="searchFor('Quần Chino Daily')">Quần Chino Daily</span>
+          <span class="px-3 py-1 bg-gray-100 hover:bg-brand-olive hover:text-white rounded-full text-xs cursor-pointer transition-colors" onclick="searchFor('Utility Jacket')">Utility Jacket</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TOAST NOTIFICATION ================= -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 bg-brand-dark text-white px-5 py-3.5 rounded-xl shadow-2xl flex items-center gap-3 transform translate-y-24 opacity-0 transition-all duration-300 pointer-events-none">
+    <i id="toastIcon" class="ph-fill ph-check-circle text-emerald-400 text-lg"></i>
+    <span id="toastMsg" class="text-xs sm:text-sm font-medium">Đã cập nhật giỏ hàng</span>
+  </div>
+
+  <!-- ================= JAVASCRIPT LOGIC ================= -->
+  <script>
+    // Cart State
+    let cart = [];
+    let wishlist = [];
+
+    // Format VND
+    function formatMoney(amount) {
+      return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'đ');
+    }
+
+    // Toast helper
+    function showToast(message, icon = 'ph-check-circle', iconColor = 'text-emerald-400') {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      const toastIcon = document.getElementById('toastIcon');
+
+      toastMsg.innerText = message;
+      toastIcon.className = `ph-fill ${icon} ${iconColor} text-lg`;
+
+      toast.classList.remove('translate-y-24', 'opacity-0', 'pointer-events-none');
+      setTimeout(() => {
+        toast.classList.add('translate-y-24', 'opacity-0', 'pointer-events-none');
+      }, 2500);
+    }
+
+    // Add To Cart
+    function addToCart(name, price, image) {
+      const existing = cart.find(item => item.name === name);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({
+          id: Date.now(),
+          name: name,
+          price: price,
+          image: image,
+          quantity: 1
+        });
+      }
+      renderCart();
+      openCart();
+      showToast(`Đã thêm "${name}" vào giỏ hàng`);
+    }
+
+    // Change Cart Item Quantity
+    function updateQuantity(index, delta) {
+      cart[index].quantity += delta;
+      if (cart[index].quantity <= 0) {
+        cart.splice(index, 1);
+      }
+      renderCart();
+    }
+
+    // Remove Cart Item
+    function removeFromCart(index) {
+      const item = cart[index];
+      cart.splice(index, 1);
+      renderCart();
+      showToast(`Đã xóa "${item.name}"`);
+    }
+
+    // Render Cart Drawer
+    function renderCart() {
+      const listEl = document.getElementById('cartItemList');
+      const cartCountEl = document.getElementById('cartCount');
+      const drawerCountEl = document.getElementById('drawerCartCount');
+      const subtotalEl = document.getElementById('cartSubtotal');
+      const emptyView = document.getElementById('emptyCartView');
+      const footerEl = document.getElementById('cartFooter');
+      
+      const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+      const subtotal = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+
+      cartCountEl.innerText = totalItems;
+      drawerCountEl.innerText = `(${totalItems})`;
+      subtotalEl.innerText = formatMoney(subtotal);
+
+      // Shipping threshold (799.000đ)
+      const freeShipThreshold = 799000;
+      const progressPercent = Math.min(100, Math.round((subtotal / freeShipThreshold) * 100));
+      document.getElementById('shipProgressBar').style.width = `${progressPercent}%`;
+      
+      if (subtotal >= freeShipThreshold) {
+        document.getElementById('shipProgressText').innerText = '🎉 Bạn đã đủ điều kiện Freeship!';
+        document.getElementById('shipAmountNeeded').innerText = 'Miễn phí';
+      } else {
+        const remaining = freeShipThreshold - subtotal;
+        document.getElementById('shipProgressText').innerText = 'Mua thêm để được freeship:';
+        document.getElementById('shipAmountNeeded').innerText = formatMoney(remaining);
+      }
+
+      if (cart.length === 0) {
+        listEl.innerHTML = '';
+        listEl.appendChild(emptyView);
+        footerEl.classList.add('opacity-50', 'pointer-events-none');
+        return;
+      }
+
+      footerEl.classList.remove('opacity-50', 'pointer-events-none');
+      listEl.innerHTML = cart.map((item, idx) => `
+        <div class="flex items-center gap-3 p-3 bg-gray-50 rounded-xl border border-gray-100">
+          <img src="${item.image}" alt="${item.name}" class="w-16 h-20 object-cover rounded-lg bg-gray-200 flex-shrink-0">
+          <div class="flex-1 min-w-0">
+            <h4 class="text-xs sm:text-sm font-bold text-gray-900 truncate">${item.name}</h4>
+            <p class="text-xs font-semibold text-gray-600 mt-0.5">${formatMoney(item.price)}</p>
+            <div class="flex items-center gap-2 mt-2">
+              <div class="flex items-center border border-gray-200 rounded-md bg-white">
+                <button onclick="updateQuantity(${idx}, -1)" class="w-6 h-6 flex items-center justify-center text-xs text-gray-500 hover:text-black">-</button>
+                <span class="w-6 text-center text-xs font-bold">${item.quantity}</span>
+                <button onclick="updateQuantity(${idx}, 1)" class="w-6 h-6 flex items-center justify-center text-xs text-gray-500 hover:text-black">+</button>
+              </div>
+              <button onclick="removeFromCart(${idx})" class="text-[11px] text-gray-400 hover:text-red-500 underline ml-2">Xóa</button>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-xs sm:text-sm font-bold text-black">${formatMoney(item.price * item.quantity)}</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Cart Drawer Controls
+    const cartDrawer = document.getElementById('cartDrawer');
+    const cartBackdrop = document.getElementById('cartDrawerBackdrop');
+
+    function openCart() {
+      cartBackdrop.classList.remove('opacity-0', 'pointer-events-none');
+      cartDrawer.classList.remove('translate-x-full');
+    }
+
+    function closeCart() {
+      cartBackdrop.classList.add('opacity-0', 'pointer-events-none');
+      cartDrawer.classList.add('translate-x-full');
+    }
+
+    document.getElementById('cartBtn').addEventListener('click', openCart);
+    document.getElementById('closeCartBtn').addEventListener('click', closeCart);
+    cartBackdrop.addEventListener('click', closeCart);
+
+    // Search Modal Controls
+    const searchModal = document.getElementById('searchModal');
+    const searchBtn = document.getElementById('searchBtn');
+    const closeSearchBtn = document.getElementById('closeSearchBtn');
+    const searchInput = document.getElementById('searchInput');
+
+    function openSearch() {
+      searchModal.classList.remove('opacity-0', 'pointer-events-none');
+      searchModal.querySelector('div').classList.remove('scale-95');
+      setTimeout(() => searchInput.focus(), 100);
+    }
+
+    function closeSearch() {
+      searchModal.classList.add('opacity-0', 'pointer-events-none');
+      searchModal.querySelector('div').classList.add('scale-95');
+    }
+
+    searchBtn.addEventListener('click', openSearch);
+    closeSearchBtn.addEventListener('click', closeSearch);
+    searchModal.addEventListener('click', (e) => {
+      if (e.target === searchModal) closeSearch();
+    });
+
+    function searchFor(term) {
+      searchInput.value = term;
+      showToast(`Đang tìm kiếm cho "${term}"...`);
+      setTimeout(closeSearch, 800);
+    }
+
+    // Filter Tabs
+    const filterTabs = document.querySelectorAll('.filter-tab');
+    const productCards = document.querySelectorAll('.product-card');
+
+    filterTabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        filterTabs.forEach(t => {
+          t.classList.remove('bg-brand-dark', 'text-white', 'active');
+          t.classList.add('bg-gray-100', 'text-gray-700');
+        });
+        tab.classList.add('bg-brand-dark', 'text-white', 'active');
+        tab.classList.remove('bg-gray-100', 'text-gray-700');
+
+        const filter = tab.getAttribute('data-filter');
+        productCards.forEach(card => {
+          const categories = card.getAttribute('data-category');
+          if (filter === 'all' || categories.includes(filter)) {
+            card.style.display = 'flex';
+          } else {
+            card.style.display = 'none';
+          }
+        });
+      });
+    });
+
+    // Mobile Menu
+    const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+
+    // Newsletter submit
+    function handleNewsletter(e) {
+      e.preventDefault();
+      const email = document.getElementById('newsletterEmail').value;
+      showToast(`Cảm ơn bạn! Ưu đãi đặc quyền đã gửi tới ${email}`, 'ph-check-circle', 'text-emerald-400');
+      document.getElementById('newsletterEmail').value = '';
+    }
+
+    // Checkout
+    function handleCheckout() {
+      if (cart.length === 0) return;
+      alert(`Đơn hàng mẫu: Tổng số tiền thanh toán là ${document.getElementById('cartSubtotal').innerText}. Cảm ơn bạn đã trải nghiệm website Freeshion!`);
+    }
+  </script>
+</body>
+</html>

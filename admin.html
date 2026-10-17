@@ -1,0 +1,1179 @@
+<!DOCTYPE html>
+<html lang="vi" class="h-full bg-[#FBFBFA]">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>freedom* Admin Workspace | Tổng quan kinh doanh</title>
+  
+  <!-- Google Fonts: Plus Jakarta Sans -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Phosphor Icons -->
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <!-- Chart.js for pixel-accurate dashboard charts -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'],
+          },
+          colors: {
+            admin: {
+              sidebarBg: '#FFFFFF',
+              sidebarBorder: '#F0EFEA',
+              mainBg: '#FAF9F6',
+              cardBg: '#FFFFFF',
+              olive: '#3F4E37',
+              oliveHover: '#33402C',
+              oliveActive: '#EDF1E8',
+              oliveText: '#3B4833',
+              dark: '#1C1C1C',
+              subtext: '#737373',
+              border: '#E8E6DF',
+              borderLight: '#F2F1EC',
+              success: '#2B825B',
+              warning: '#D97706',
+              info: '#2563EB',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #1c1c1c;
+      -webkit-font-smoothing: antialiased;
+    }
+    .custom-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+    .custom-scroll::-webkit-scrollbar-thumb {
+      background-color: #e5e4de;
+      border-radius: 9999px;
+    }
+    .sidebar-item.active {
+      background-color: #EDF1E8;
+      color: #384730;
+      font-weight: 600;
+    }
+    .sidebar-item.active i {
+      color: #384730;
+    }
+  </style>
+</head>
+<body class="h-full flex overflow-hidden bg-[#FAF9F6] text-admin-dark text-[13px]">
+
+  <!-- ================= SIDEBAR TÁC VỤ BÊN TRÁI ================= -->
+  <aside class="w-64 bg-white border-r border-[#EFEFEA] flex flex-col flex-shrink-0 z-30 select-none">
+    
+    <!-- Workspace Brand Header -->
+    <div class="px-5 pt-5 pb-4 border-b border-[#F4F3EE]">
+      <div class="flex items-center justify-between">
+        <a href="admin.html" class="flex items-start tracking-tight font-extrabold text-2xl text-admin-dark group">
+          <span>freedom</span>
+          <span class="text-base leading-none text-admin-olive font-extrabold ml-0.5">*</span>
+        </a>
+      </div>
+      <div class="text-[10px] uppercase font-bold tracking-widest text-gray-400 mt-0.5">
+        ADMIN WORKSPACE
+      </div>
+      
+      <!-- Store Switcher Card -->
+      <div class="mt-4 p-2.5 bg-[#FAF9F6] border border-[#ECEAE3] rounded-xl flex items-center justify-between cursor-pointer hover:bg-[#F4F2EC] transition-colors">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-7 h-7 rounded-lg bg-white border border-[#E0DED7] flex items-center justify-center font-bold text-xs text-admin-olive">
+            F
+          </div>
+          <div class="truncate">
+            <h4 class="text-xs font-bold text-admin-dark truncate">Freedom Menswear</h4>
+            <div class="flex items-center gap-1.5 mt-0.5">
+              <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+              <span class="text-[10px] text-gray-500 font-medium truncate">Cửa hàng đang hoạt động</span>
+            </div>
+          </div>
+        </div>
+        <i class="ph ph-caret-down text-gray-400 text-xs"></i>
+      </div>
+    </div>
+
+    <!-- Navigation Menu List -->
+    <div class="flex-1 overflow-y-auto px-3 py-3 space-y-5 custom-scroll">
+      
+      <!-- Nhóm 1: TỔNG QUAN -->
+      <div>
+        <div class="px-3 pb-1 text-[10px] uppercase font-bold tracking-wider text-gray-400">
+          TỔNG QUAN
+        </div>
+        <div class="space-y-0.5">
+          <button onclick="switchTab('dashboard')" id="nav-dashboard" class="sidebar-item active w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-squares-four text-base"></i>
+              <span>Tổng quan</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nhóm 2: QUẢN LÝ CỬA HÀNG -->
+      <div>
+        <div class="px-3 pb-1 text-[10px] uppercase font-bold tracking-wider text-gray-400">
+          QUẢN LÝ CỬA HÀNG
+        </div>
+        <div class="space-y-0.5">
+          <!-- Đơn hàng -->
+          <button onclick="switchTab('orders')" id="nav-orders" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-receipt text-base"></i>
+              <span>Đơn hàng</span>
+            </div>
+            <span class="bg-[#F0EEE6] text-[#555] text-[10px] font-bold px-1.5 py-0.5 rounded-md">12</span>
+          </button>
+
+          <!-- Sản phẩm -->
+          <button onclick="switchTab('products')" id="nav-products" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-tag text-base"></i>
+              <span>Sản phẩm</span>
+            </div>
+          </button>
+
+          <!-- Danh mục & thương hiệu -->
+          <button onclick="switchTab('categories')" id="nav-categories" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-folder-notch-open text-base"></i>
+              <span>Danh mục & thương hiệu</span>
+            </div>
+          </button>
+
+          <!-- Quản lý kho -->
+          <button onclick="switchTab('inventory')" id="nav-inventory" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-archive-box text-base"></i>
+              <span>Quản lý kho</span>
+            </div>
+          </button>
+
+          <!-- Khách hàng -->
+          <button onclick="switchTab('customers')" id="nav-customers" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-users text-base"></i>
+              <span>Khách hàng</span>
+            </div>
+          </button>
+
+          <!-- Voucher & khuyến mãi -->
+          <button onclick="switchTab('vouchers')" id="nav-vouchers" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-ticket text-base"></i>
+              <span>Voucher & khuyến mãi</span>
+            </div>
+          </button>
+
+          <!-- Đánh giá sản phẩm -->
+          <button onclick="switchTab('reviews')" id="nav-reviews" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-star text-base"></i>
+              <span>Đánh giá sản phẩm</span>
+            </div>
+          </button>
+
+          <!-- Banner & bài viết -->
+          <button onclick="switchTab('banners')" id="nav-banners" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-article text-base"></i>
+              <span>Banner & bài viết</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nhóm 3: VẬN HÀNH -->
+      <div>
+        <div class="px-3 pb-1 text-[10px] uppercase font-bold tracking-wider text-gray-400">
+          VẬN HÀNH
+        </div>
+        <div class="space-y-0.5">
+          <!-- Đổi trả & hoàn tiền -->
+          <button onclick="switchTab('returns')" id="nav-returns" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-credit-card text-base"></i>
+              <span>Đổi trả & hoàn tiền</span>
+            </div>
+            <span class="bg-[#F0EEE6] text-[#555] text-[10px] font-bold px-1.5 py-0.5 rounded-md">3</span>
+          </button>
+
+          <!-- Hỗ trợ khách hàng -->
+          <button onclick="switchTab('support')" id="nav-support" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-headphones text-base"></i>
+              <span>Hỗ trợ khách hàng</span>
+            </div>
+          </button>
+
+          <!-- Nhân viên & phân quyền -->
+          <button onclick="switchTab('staff')" id="nav-staff" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-user-gear text-base"></i>
+              <span>Nhân viên & phân quyền</span>
+            </div>
+          </button>
+
+          <!-- Nhật ký hoạt động -->
+          <button onclick="switchTab('logs')" id="nav-logs" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+            <div class="flex items-center gap-2.5">
+              <i class="ph ph-activity text-base"></i>
+              <span>Nhật ký hoạt động</span>
+            </div>
+          </button>
+        </div>
+      </div>
+
+      <!-- Nhóm 4: CÀI ĐẶT & TRỢ GIÚP -->
+      <div class="pt-2 border-t border-[#F2F1EC] space-y-0.5">
+        <button onclick="switchTab('settings')" id="nav-settings" class="sidebar-item w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i class="ph ph-gear text-base"></i>
+            <span>Cài đặt</span>
+          </div>
+        </button>
+
+        <a href="https://google.com" target="_blank" class="w-full flex items-center justify-between px-3 py-2 rounded-xl text-xs text-gray-600 hover:bg-gray-50 hover:text-black transition-colors">
+          <div class="flex items-center gap-2.5">
+            <i class="ph ph-question text-base"></i>
+            <span>Trung tâm trợ giúp</span>
+          </div>
+          <i class="ph ph-arrow-up-right text-xs text-gray-400"></i>
+        </a>
+      </div>
+
+    </div>
+
+    <!-- User Profile Footer -->
+    <div class="p-3 border-t border-[#EFEFEA] bg-[#FCFBF8]">
+      <div class="flex items-center justify-between p-2 rounded-xl hover:bg-[#F2EFE8] transition-colors cursor-pointer">
+        <div class="flex items-center gap-2.5 min-w-0">
+          <div class="w-8 h-8 rounded-full bg-[#E5E0D4] border border-[#DDD8CB] flex items-center justify-center font-bold text-xs text-admin-dark">
+            KA
+          </div>
+          <div class="truncate">
+            <div class="text-xs font-bold text-admin-dark truncate">Khánh Admin</div>
+            <div class="text-[10px] text-gray-400 truncate">Quản trị viên</div>
+          </div>
+        </div>
+        <button title="Đăng xuất" class="p-1.5 text-gray-400 hover:text-black rounded-lg">
+          <i class="ph ph-sign-out text-base"></i>
+        </button>
+      </div>
+    </div>
+
+  </aside>
+
+  <!-- ================= MAIN CONTENT AREA ================= -->
+  <div class="flex-1 flex flex-col min-w-0 overflow-hidden">
+    
+    <!-- Top Header Bar -->
+    <header class="h-14 bg-white border-b border-[#EFEFEA] px-6 flex items-center justify-between flex-shrink-0 z-20">
+      
+      <!-- Breadcrumb Left -->
+      <div class="flex items-center gap-2 text-xs text-gray-500">
+        <span>Không gian quản trị</span>
+        <i class="ph ph-caret-right text-[10px] text-gray-300"></i>
+        <span id="breadcrumbCurrent" class="font-semibold text-admin-dark">Tổng quan</span>
+      </div>
+
+      <!-- Action Right -->
+      <div class="flex items-center gap-4">
+        
+        <!-- Link to Storefront (index.html) -->
+        <a href="index.html" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E2DFD7] hover:border-black hover:bg-gray-50 text-xs font-medium text-admin-dark transition-all">
+          <span>Xem cửa hàng</span>
+          <i class="ph ph-arrow-up-right text-xs"></i>
+        </a>
+
+        <!-- Notification Bell -->
+        <button class="relative p-2 text-gray-600 hover:text-black hover:bg-gray-100 rounded-full transition-colors" title="Thông báo">
+          <i class="ph ph-bell text-lg"></i>
+          <span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-amber-500"></span>
+        </button>
+
+        <!-- User Avatar Small -->
+        <div class="w-7 h-7 rounded-full bg-[#E5E0D4] border border-[#DDD8CB] flex items-center justify-center font-bold text-[11px] text-admin-dark">
+          KA
+        </div>
+      </div>
+
+    </header>
+
+    <!-- Main Scrollable Body -->
+    <main class="flex-1 overflow-y-auto px-6 lg:px-8 py-6 custom-scroll">
+      
+      <!-- ================= VIEW 1: TỔNG QUAN KINH DOANH (DASHBOARD) ================= -->
+      <div id="view-dashboard" class="space-y-6">
+        
+        <!-- Page Title & Actions -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div>
+            <div class="text-[10px] font-bold tracking-widest uppercase text-gray-400">
+              FREEDOM ADMIN | DASHBOARD
+            </div>
+            <div class="flex items-center gap-3 mt-1">
+              <h1 class="text-2xl font-extrabold text-admin-dark tracking-tight">Tổng quan kinh doanh</h1>
+              <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] font-medium bg-[#EBF3E8] text-[#3D5233]">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+                <span>Cập nhật trực tiếp</span>
+              </span>
+            </div>
+            <p class="text-xs text-gray-500 mt-1">Chào Khánh, cùng xem cửa hàng bạn hôm nay thế nào nhé.</p>
+          </div>
+
+          <div class="flex items-center gap-3">
+            <button onclick="handleExportReport()" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-xl border border-[#DCD9D0] bg-white hover:bg-gray-50 text-xs font-semibold text-admin-dark shadow-sm transition-all">
+              <i class="ph ph-file-arrow-down text-base text-gray-500"></i>
+              <span>Xuất báo cáo</span>
+            </button>
+            <button onclick="switchTab('products')" class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-admin-olive hover:bg-admin-oliveHover text-white text-xs font-semibold shadow-sm transition-all">
+              <i class="ph ph-plus font-bold"></i>
+              <span>Thêm sản phẩm</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Filter Sub-tabs & Date Picker -->
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between border-b border-[#EAE8E2] pb-3 gap-3">
+          <div class="flex items-center gap-6 text-xs font-medium">
+            <button class="text-admin-dark font-bold relative py-1 after:content-[''] after:absolute after:bottom-[-13px] after:left-0 after:w-full after:h-[2px] after:bg-admin-olive">
+              Tổng quan
+            </button>
+            <button class="text-gray-500 hover:text-black transition-colors py-1">
+              Hoạt động gần đây
+            </button>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <button class="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border border-[#DCD9D0] bg-white text-xs font-semibold text-admin-dark shadow-sm hover:bg-gray-50">
+                <i class="ph ph-calendar text-gray-500"></i>
+                <span>Tháng này</span>
+                <i class="ph ph-caret-down text-[10px] text-gray-400"></i>
+              </button>
+            </div>
+            <span class="text-xs text-gray-400 font-mono">[ 01 - 30/06/2024 ]</span>
+          </div>
+        </div>
+
+        <!-- 4 Top KPI Stat Cards -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          
+          <!-- KPI 1: Tổng doanh thu -->
+          <div class="bg-white rounded-2xl p-4 border border-[#ECEBE5] shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-500">
+              <span class="text-xs font-medium">Tổng doanh thu</span>
+              <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600">
+                <i class="ph ph-credit-card text-sm"></i>
+              </div>
+            </div>
+            <div class="my-3">
+              <div class="text-xl sm:text-2xl font-extrabold text-admin-dark tracking-tight">128.450.000 đ</div>
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t border-gray-100">
+              <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-0.5">
+                <i class="ph ph-arrow-up-right"></i> 18.2%
+              </span>
+              <span class="text-[10px] text-gray-400">so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- KPI 2: Tổng đơn hàng -->
+          <div class="bg-white rounded-2xl p-4 border border-[#ECEBE5] shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-500">
+              <span class="text-xs font-medium">Tổng đơn hàng</span>
+              <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600">
+                <i class="ph ph-package text-sm"></i>
+              </div>
+            </div>
+            <div class="my-3">
+              <div class="text-xl sm:text-2xl font-extrabold text-admin-dark tracking-tight">486</div>
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t border-gray-100">
+              <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-0.5">
+                <i class="ph ph-arrow-up-right"></i> 12.8%
+              </span>
+              <span class="text-[10px] text-gray-400">so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- KPI 3: Khách hàng mới -->
+          <div class="bg-white rounded-2xl p-4 border border-[#ECEBE5] shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-500">
+              <span class="text-xs font-medium">Khách hàng mới</span>
+              <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600">
+                <i class="ph ph-user-plus text-sm"></i>
+              </div>
+            </div>
+            <div class="my-3">
+              <div class="text-xl sm:text-2xl font-extrabold text-admin-dark tracking-tight">128</div>
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t border-gray-100">
+              <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-0.5">
+                <i class="ph ph-arrow-up-right"></i> 8.2%
+              </span>
+              <span class="text-[10px] text-gray-400">so với tháng trước</span>
+            </div>
+          </div>
+
+          <!-- KPI 4: Sản phẩm đã bán -->
+          <div class="bg-white rounded-2xl p-4 border border-[#ECEBE5] shadow-sm hover:shadow transition-shadow flex flex-col justify-between">
+            <div class="flex items-center justify-between text-gray-500">
+              <span class="text-xs font-medium">Sản phẩm đã bán</span>
+              <div class="w-7 h-7 rounded-lg bg-gray-50 flex items-center justify-center text-gray-600">
+                <i class="ph ph-shopping-bag text-sm"></i>
+              </div>
+            </div>
+            <div class="my-3">
+              <div class="text-xl sm:text-2xl font-extrabold text-admin-dark tracking-tight">1.248</div>
+            </div>
+            <div class="flex items-center justify-between pt-1 border-t border-gray-100">
+              <span class="text-[11px] text-emerald-600 font-semibold flex items-center gap-0.5">
+                <i class="ph ph-arrow-up-right"></i> 15.3%
+              </span>
+              <span class="text-[10px] text-gray-400">so với tháng trước</span>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Charts Row: Doanh thu bán hàng & Trạng thái đơn hàng -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Line Chart: Doanh thu bán hàng (8 cols) -->
+          <div class="lg:col-span-8 bg-white rounded-2xl p-5 border border-[#ECEBE5] shadow-sm flex flex-col justify-between">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-admin-dark">Doanh thu bán hàng</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Theo dõi hiệu quả kinh doanh theo thời gian</p>
+                <div class="flex items-baseline gap-2 mt-2">
+                  <span class="text-xl font-extrabold text-admin-dark">128.450.000 đ</span>
+                  <span class="text-[11px] font-semibold text-emerald-600">↗ 21.4% so với cùng kỳ</span>
+                </div>
+              </div>
+              <div class="flex items-center gap-3 text-xs">
+                <span class="flex items-center gap-1.5 font-medium text-admin-dark">
+                  <span class="w-2.5 h-2.5 rounded-full bg-admin-olive"></span>
+                  <span>Tháng này</span>
+                </span>
+                <span class="flex items-center gap-1.5 text-gray-400">
+                  <span class="w-2.5 h-2.5 rounded-full bg-gray-300"></span>
+                  <span>Tháng trước</span>
+                </span>
+              </div>
+            </div>
+            <!-- Canvas Container -->
+            <div class="h-64 w-full">
+              <canvas id="revenueChart"></canvas>
+            </div>
+          </div>
+
+          <!-- Donut Chart: Trạng thái đơn hàng (4 cols) -->
+          <div class="lg:col-span-4 bg-white rounded-2xl p-5 border border-[#ECEBE5] shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-2">
+              <div>
+                <h3 class="text-sm font-bold text-admin-dark">Trạng thái đơn hàng</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Tổng quan 486 đơn hàng kỳ này</p>
+              </div>
+              <button onclick="switchTab('orders')" class="p-1 text-gray-400 hover:text-black">
+                <i class="ph ph-arrow-up-right text-base"></i>
+              </button>
+            </div>
+
+            <!-- Donut Canvas with center text -->
+            <div class="relative h-44 w-full flex items-center justify-center my-2">
+              <canvas id="orderStatusChart"></canvas>
+              <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
+                <span class="text-2xl font-black text-admin-dark">486</span>
+                <span class="text-[10px] text-gray-400 uppercase font-medium">Tổng đơn hàng</span>
+              </div>
+            </div>
+
+            <!-- Legends -->
+            <div class="space-y-2 pt-2 border-t border-gray-100 text-xs">
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-gray-600">
+                  <span class="w-2 h-2 rounded-full bg-[#3F4E37]"></span>
+                  <span>Hoàn thành</span>
+                </span>
+                <span class="font-bold text-admin-dark">348</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-gray-600">
+                  <span class="w-2 h-2 rounded-full bg-[#6C835D]"></span>
+                  <span>Đang giao</span>
+                </span>
+                <span class="font-bold text-admin-dark">82</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-gray-600">
+                  <span class="w-2 h-2 rounded-full bg-[#D4A373]"></span>
+                  <span>Đang xử lý</span>
+                </span>
+                <span class="font-bold text-admin-dark">38</span>
+              </div>
+              <div class="flex items-center justify-between">
+                <span class="flex items-center gap-2 text-gray-600">
+                  <span class="w-2 h-2 rounded-full bg-[#E07A5F]"></span>
+                  <span>Đã hủy</span>
+                </span>
+                <span class="font-bold text-admin-dark">18</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Action Needed Bar (Cần bạn xử lý) -->
+        <div class="bg-[#F8F7F3] border border-[#E8E6DF] rounded-2xl p-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+          <div class="flex flex-wrap items-center gap-3 sm:gap-6">
+            <span class="font-bold text-admin-dark flex items-center gap-1.5">
+              <i class="ph ph-warning-circle text-amber-600 text-base"></i>
+              <span>Cần bạn xử lý:</span>
+            </span>
+            <a href="#" onclick="switchTab('orders')" class="text-gray-700 hover:text-black font-medium">
+              <span class="font-bold text-admin-dark">12</span> đơn chờ xác nhận &gt;
+            </a>
+            <span class="text-gray-300 hidden sm:inline">•</span>
+            <a href="#" onclick="switchTab('returns')" class="text-gray-700 hover:text-black font-medium">
+              <span class="font-bold text-admin-dark">3</span> yêu cầu đổi trả &gt;
+            </a>
+            <span class="text-gray-300 hidden sm:inline">•</span>
+            <a href="#" onclick="switchTab('inventory')" class="text-gray-700 hover:text-black font-medium">
+              <span class="font-bold text-admin-dark">2</span> sản phẩm sắp hết hàng &gt;
+            </a>
+          </div>
+          <button onclick="switchTab('orders')" class="text-xs font-semibold text-admin-dark hover:underline flex items-center gap-1">
+            <span>Xem tất cả</span>
+            <i class="ph ph-arrow-right"></i>
+          </button>
+        </div>
+
+        <!-- Recent Orders Table -->
+        <div class="bg-white rounded-2xl border border-[#ECEBE5] shadow-sm overflow-hidden">
+          <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-gray-100">
+            <div>
+              <div class="flex items-center gap-2">
+                <h3 class="text-sm font-bold text-admin-dark">Đơn hàng gần đây</h3>
+                <span class="bg-gray-100 text-gray-700 text-[10px] font-bold px-2 py-0.5 rounded-full">5</span>
+              </div>
+              <p class="text-[11px] text-gray-400 mt-0.5">Những đơn hàng mới nhất từ cửa hàng của bạn</p>
+            </div>
+            <button onclick="switchTab('orders')" class="text-xs font-semibold text-admin-dark hover:underline flex items-center gap-1">
+              <span>Tất cả đơn hàng</span>
+              <i class="ph ph-arrow-right"></i>
+            </button>
+          </div>
+
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs">
+              <thead>
+                <tr class="bg-[#FAF9F6] text-gray-500 border-b border-gray-100">
+                  <th class="py-3 px-4 w-10">
+                    <input type="checkbox" class="rounded text-admin-olive focus:ring-0">
+                  </th>
+                  <th class="py-3 px-4 font-semibold">Mã đơn hàng</th>
+                  <th class="py-3 px-4 font-semibold">Khách hàng</th>
+                  <th class="py-3 px-4 font-semibold">Ngày đặt</th>
+                  <th class="py-3 px-4 font-semibold">Tổng tiền</th>
+                  <th class="py-3 px-4 font-semibold">Thanh toán</th>
+                  <th class="py-3 px-4 font-semibold">Trạng thái</th>
+                  <th class="py-3 px-4 w-10 text-right"></th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-100 text-gray-700">
+                
+                <!-- Order 1 -->
+                <tr class="hover:bg-gray-50/70 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <input type="checkbox" class="rounded text-admin-olive focus:ring-0">
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    #FR-10258
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-[#E5DFD7] text-admin-dark font-bold text-[10px] flex items-center justify-center">
+                        MA
+                      </div>
+                      <div>
+                        <div class="font-semibold text-admin-dark">Nguyễn Minh Anh</div>
+                        <div class="text-[10px] text-gray-400">nguyen.minhanh@gmail.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-gray-500 font-mono text-[11px]">
+                    24/06/2024 - 14:32
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    1.248.000 đ
+                    <span class="block text-[10px] font-normal text-gray-400">2 sản phẩm</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Đã thanh toán</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-amber-50 text-amber-700 border border-amber-200/60">
+                      Chờ xác nhận
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button class="p-1 text-gray-400 hover:text-black rounded">
+                      <i class="ph ph-dots-three-vertical text-base"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Order 2 -->
+                <tr class="hover:bg-gray-50/70 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <input type="checkbox" class="rounded text-admin-olive focus:ring-0">
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    #FR-10257
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-[#D7DFE5] text-admin-dark font-bold text-[10px] flex items-center justify-center">
+                        TN
+                      </div>
+                      <div>
+                        <div class="font-semibold text-admin-dark">Trần Hoàng Nam</div>
+                        <div class="text-[10px] text-gray-400">namtran.wear@gmail.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-gray-500 font-mono text-[11px]">
+                    24/06/2024 - 13:45
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    849.000 đ
+                    <span class="block text-[10px] font-normal text-gray-400">1 sản phẩm</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center gap-1 text-[11px] text-blue-700 font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                      <span>Chuyển khoản</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-blue-50 text-blue-700 border border-blue-200/60">
+                      Đang xử lý
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button class="p-1 text-gray-400 hover:text-black rounded">
+                      <i class="ph ph-dots-three-vertical text-base"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Order 3 -->
+                <tr class="hover:bg-gray-50/70 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <input type="checkbox" class="rounded text-admin-olive focus:ring-0">
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    #FR-10256
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-[#E5D7E0] text-admin-dark font-bold text-[10px] flex items-center justify-center">
+                        DH
+                      </div>
+                      <div>
+                        <div class="font-semibold text-admin-dark">Lê Đức Huy</div>
+                        <div class="text-[10px] text-gray-400">huy.leduc@gmail.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-gray-500 font-mono text-[11px]">
+                    24/06/2024 - 12:20
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    1.597.000 đ
+                    <span class="block text-[10px] font-normal text-gray-400">3 sản phẩm</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Đã thanh toán</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-purple-50 text-purple-700 border border-purple-200/60">
+                      Đang giao
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button class="p-1 text-gray-400 hover:text-black rounded">
+                      <i class="ph ph-dots-three-vertical text-base"></i>
+                    </button>
+                  </td>
+                </tr>
+
+                <!-- Order 4 -->
+                <tr class="hover:bg-gray-50/70 transition-colors">
+                  <td class="py-3.5 px-4">
+                    <input type="checkbox" class="rounded text-admin-olive focus:ring-0">
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    #FR-10255
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <div class="flex items-center gap-2.5">
+                      <div class="w-7 h-7 rounded-full bg-[#DFE5D7] text-admin-dark font-bold text-[10px] flex items-center justify-center">
+                        TK
+                      </div>
+                      <div>
+                        <div class="font-semibold text-admin-dark">Phạm Tuấn Kiệt</div>
+                        <div class="text-[10px] text-gray-400">kietpham.premi@gmail.com</div>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="py-3.5 px-4 text-gray-500 font-mono text-[11px]">
+                    23/06/2024 - 17:15
+                  </td>
+                  <td class="py-3.5 px-4 font-bold text-admin-dark">
+                    549.000 đ
+                    <span class="block text-[10px] font-normal text-gray-400">1 sản phẩm</span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center gap-1 text-[11px] text-emerald-700 font-medium">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                      <span>Đã thanh toán</span>
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4">
+                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/60">
+                      Hoàn thành
+                    </span>
+                  </td>
+                  <td class="py-3.5 px-4 text-right">
+                    <button class="p-1 text-gray-400 hover:text-black rounded">
+                      <i class="ph ph-dots-three-vertical text-base"></i>
+                    </button>
+                  </td>
+                </tr>
+
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- 2 Bottom Columns: Sản phẩm bán chạy & Hoạt động gần đây -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          
+          <!-- Sản phẩm bán chạy (7 cols) -->
+          <div class="lg:col-span-7 bg-white rounded-2xl p-5 border border-[#ECEBE5] shadow-sm">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-admin-dark">Sản phẩm bán chạy</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Những món đồ được khách hàng yêu thích nhất</p>
+              </div>
+              <button onclick="switchTab('products')" class="text-xs font-semibold text-admin-dark hover:underline flex items-center gap-1">
+                <span>Xem tất cả</span>
+                <i class="ph ph-arrow-right"></i>
+              </button>
+            </div>
+
+            <div class="space-y-3">
+              <!-- Item 1 -->
+              <div class="flex items-center justify-between p-3 bg-gray-50/60 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3">
+                  <img src="assets/images/prod_so_mi_linen.jpg" alt="Sơ mi Linen Essential" class="w-12 h-14 object-cover rounded-lg bg-gray-200 border border-gray-200">
+                  <div>
+                    <h4 class="text-xs font-bold text-admin-dark">Sơ mi Linen Essential</h4>
+                    <span class="text-[10px] text-gray-400">Mã: FR-SM-001 • Đã bán: 128</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-extrabold text-admin-dark">70.272.000 đ</div>
+                  <span class="text-[10px] text-emerald-600 font-semibold">Tồn: 45 cái</span>
+                </div>
+              </div>
+
+              <!-- Item 2 -->
+              <div class="flex items-center justify-between p-3 bg-gray-50/60 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3">
+                  <img src="assets/images/prod_polo_cotton.jpg" alt="Polo Cotton Signature" class="w-12 h-14 object-cover rounded-lg bg-gray-200 border border-gray-200">
+                  <div>
+                    <h4 class="text-xs font-bold text-admin-dark">Polo Cotton Signature</h4>
+                    <span class="text-[10px] text-gray-400">Mã: FR-PL-002 • Đã bán: 96</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-extrabold text-admin-dark">38.304.000 đ</div>
+                  <span class="text-[10px] text-emerald-600 font-semibold">Tồn: 28 cái</span>
+                </div>
+              </div>
+
+              <!-- Item 3 -->
+              <div class="flex items-center justify-between p-3 bg-gray-50/60 rounded-xl border border-gray-100 hover:bg-gray-50 transition-colors">
+                <div class="flex items-center gap-3">
+                  <img src="assets/images/prod_quan_chino.jpg" alt="Quần Chino Daily" class="w-12 h-14 object-cover rounded-lg bg-gray-200 border border-gray-200">
+                  <div>
+                    <h4 class="text-xs font-bold text-admin-dark">Quần Chino Daily</h4>
+                    <span class="text-[10px] text-gray-400">Mã: FR-QC-003 • Đã bán: 85</span>
+                  </div>
+                </div>
+                <div class="text-right">
+                  <div class="text-xs font-extrabold text-admin-dark">55.165.000 đ</div>
+                  <span class="text-[10px] text-emerald-600 font-semibold">Tồn: 62 cái</span>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Hoạt động gần đây (5 cols) -->
+          <div class="lg:col-span-5 bg-white rounded-2xl p-5 border border-[#ECEBE5] shadow-sm flex flex-col justify-between">
+            <div class="flex items-center justify-between mb-4">
+              <div>
+                <h3 class="text-sm font-bold text-admin-dark">Hoạt động gần đây</h3>
+                <p class="text-[11px] text-gray-400 mt-0.5">Cập nhật các hoạt động mới trên hệ thống</p>
+              </div>
+              <i class="ph ph-lightning text-admin-olive text-lg"></i>
+            </div>
+
+            <div class="space-y-4">
+              
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="ph ph-receipt text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-xs text-admin-dark font-medium">
+                    <span class="font-bold">Đơn hàng mới</span> <a href="#" class="font-bold text-admin-olive hover:underline">#FR-10258</a>
+                  </div>
+                  <div class="text-[11px] text-gray-400 mt-0.5">Nguyễn Minh Anh vừa đặt 2 sản phẩm • 2 phút trước</div>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="ph ph-tag text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-xs text-admin-dark font-medium">
+                    <span class="font-bold">Cập nhật sản phẩm</span>
+                  </div>
+                  <div class="text-[11px] text-gray-400 mt-0.5">Utility Jacket đã được cập nhật số lượng tồn kho • 15 phút trước</div>
+                </div>
+              </div>
+
+              <div class="flex items-start gap-3">
+                <div class="w-7 h-7 rounded-full bg-purple-50 text-purple-600 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <i class="ph ph-truck text-xs"></i>
+                </div>
+                <div class="flex-1">
+                  <div class="text-xs text-admin-dark font-medium">
+                    <span class="font-bold">Đơn hàng giao thành công</span>
+                  </div>
+                  <div class="text-[11px] text-gray-400 mt-0.5">#FR-10250 đã được giao đến khách hàng • 42 phút trước</div>
+                </div>
+              </div>
+
+            </div>
+
+            <div class="pt-4 border-t border-gray-100 text-center">
+              <a href="#" onclick="switchTab('logs')" class="text-xs text-gray-500 hover:text-black font-medium">
+                Xem toàn bộ nhật ký &rarr;
+              </a>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+      <!-- ================= VIEW 2: VOUCHER & KHUYẾN MÃI (As shown in screenshot 2) ================= -->
+      <div id="view-vouchers" class="hidden space-y-6">
+        <div>
+          <h1 class="text-2xl font-extrabold text-admin-dark tracking-tight">Voucher & khuyến mãi</h1>
+          <p class="text-xs text-gray-500 mt-1">Theo dõi và quản lý voucher & khuyến mãi của cửa hàng Freedom.</p>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-[#ECEBE5] shadow-sm p-6 min-h-[500px] flex flex-col justify-between">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-gray-100">
+            <div class="relative w-full sm:w-96">
+              <i class="ph ph-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input 
+                type="text" 
+                placeholder="Tìm kiếm voucher & khuyến mãi..." 
+                class="w-full pl-9 pr-4 py-2 bg-white border border-[#DCD9D0] rounded-xl text-xs outline-none focus:ring-1 focus:ring-admin-olive shadow-sm"
+              >
+            </div>
+            <span class="text-[11px] text-gray-400">Dữ liệu minh họa</span>
+          </div>
+
+          <!-- Empty State (Exact as in Screenshot 2) -->
+          <div class="flex-1 flex flex-col items-center justify-center py-16 text-center">
+            <div class="w-16 h-16 rounded-2xl bg-[#F4F3EE] flex items-center justify-center text-admin-olive mb-4">
+              <i class="ph ph-ticket text-3xl"></i>
+            </div>
+            <h3 class="text-base font-bold text-admin-dark">Voucher & khuyến mãi</h3>
+            <p class="text-xs text-gray-500 max-w-sm mt-1">
+              Chưa có dữ liệu. Thêm bản ghi đầu tiên để bắt đầu quản lý.
+            </p>
+            <button onclick="alert('Mở form tạo mới Voucher & Khuyến mãi!')" class="mt-5 inline-flex items-center gap-1.5 px-4 py-2.5 rounded-xl bg-admin-olive hover:bg-admin-oliveHover text-white text-xs font-semibold shadow-sm transition-all">
+              <i class="ph ph-plus font-bold"></i>
+              <span>Thêm mới</span>
+            </button>
+          </div>
+
+          <div class="pt-4 border-t border-gray-100 flex items-center justify-between text-xs text-gray-400">
+            <span>Dữ liệu được quản lý trong bản demo này</span>
+            <div class="flex items-center gap-2">
+              <button class="p-1 rounded text-gray-400 hover:text-black">&lt;</button>
+              <span class="w-6 h-6 rounded bg-gray-100 flex items-center justify-center font-bold text-black text-xs">1</span>
+              <button class="p-1 rounded text-gray-400 hover:text-black">&gt;</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 3: DANH SÁCH ĐƠN HÀNG ================= -->
+      <div id="view-orders" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-extrabold text-admin-dark tracking-tight">Quản lý đơn hàng</h1>
+            <p class="text-xs text-gray-500 mt-1">Theo dõi, xác nhận và xử lý giao vận cho toàn bộ đơn đặt hàng.</p>
+          </div>
+          <button onclick="handleExportReport()" class="px-4 py-2 bg-admin-olive text-white rounded-xl text-xs font-semibold">
+            Xuất dữ liệu đơn hàng
+          </button>
+        </div>
+
+        <div class="bg-white rounded-2xl border border-[#ECEBE5] shadow-sm p-5">
+          <p class="text-xs text-gray-600 mb-4 font-medium">Toàn bộ danh sách 486 đơn hàng đang được lưu trữ an toàn trong hệ thống.</p>
+          <div class="text-xs text-gray-400">Xem bảng tóm tắt chi tiết ở tab <b>Tổng quan</b>.</div>
+        </div>
+      </div>
+
+      <!-- ================= VIEW 4: SẢN PHẨM ================= -->
+      <div id="view-products" class="hidden space-y-6">
+        <div class="flex items-center justify-between">
+          <div>
+            <h1 class="text-2xl font-extrabold text-admin-dark tracking-tight">Quản lý sản phẩm</h1>
+            <p class="text-xs text-gray-500 mt-1">Danh mục sản phẩm thời trang cao cấp của thương hiệu Freedom.</p>
+          </div>
+          <button onclick="alert('Mở modal thêm sản phẩm mới')" class="px-4 py-2 bg-admin-olive text-white rounded-xl text-xs font-semibold">
+            + Thêm sản phẩm mới
+          </button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="bg-white p-4 rounded-2xl border border-gray-200">
+            <img src="assets/images/prod_so_mi_linen.jpg" alt="Sơ mi" class="w-full h-48 object-cover rounded-xl mb-3">
+            <h4 class="font-bold text-xs">Sơ mi Linen Essential</h4>
+            <p class="text-xs text-admin-olive font-bold mt-1">549.000 đ</p>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200">
+            <img src="assets/images/prod_polo_cotton.jpg" alt="Polo" class="w-full h-48 object-cover rounded-xl mb-3">
+            <h4 class="font-bold text-xs">Polo Cotton Signature</h4>
+            <p class="text-xs text-admin-olive font-bold mt-1">399.000 đ</p>
+          </div>
+          <div class="bg-white p-4 rounded-2xl border border-gray-200">
+            <img src="assets/images/prod_quan_chino.jpg" alt="Quần" class="w-full h-48 object-cover rounded-xl mb-3">
+            <h4 class="font-bold text-xs">Quần Chino Daily</h4>
+            <p class="text-xs text-admin-olive font-bold mt-1">649.000 đ</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Generic View for others -->
+      <div id="view-generic" class="hidden space-y-6">
+        <div class="bg-white rounded-2xl border border-[#ECEBE5] shadow-sm p-12 text-center">
+          <div class="w-12 h-12 rounded-2xl bg-gray-100 text-gray-600 flex items-center justify-center mx-auto mb-3 text-2xl">
+            <i class="ph ph-sliders"></i>
+          </div>
+          <h2 id="genericTitle" class="text-base font-bold text-admin-dark">Mục quản lý</h2>
+          <p class="text-xs text-gray-400 mt-1">Tính năng đang hoạt động trong hệ thống quản trị Freedom.</p>
+        </div>
+      </div>
+
+    </main>
+
+  </div>
+
+  <!-- ================= SCRIPTS ================= -->
+  <script>
+    // Tab switcher logic
+    function switchTab(tabId) {
+      // Remove active from all sidebar items
+      document.querySelectorAll('.sidebar-item').forEach(el => {
+        el.classList.remove('active');
+        el.classList.add('text-gray-600');
+      });
+
+      // Add active to selected
+      const targetNav = document.getElementById('nav-' + tabId);
+      if (targetNav) {
+        targetNav.classList.add('active');
+        targetNav.classList.remove('text-gray-600');
+      }
+
+      // Hide all views
+      const views = ['dashboard', 'vouchers', 'orders', 'products', 'generic'];
+      views.forEach(v => {
+        const el = document.getElementById('view-' + v);
+        if (el) el.classList.add('hidden');
+      });
+
+      // Update breadcrumb
+      const breadcrumb = document.getElementById('breadcrumbCurrent');
+
+      if (tabId === 'dashboard') {
+        document.getElementById('view-dashboard').classList.remove('hidden');
+        breadcrumb.innerText = 'Tổng quan';
+      } else if (tabId === 'vouchers') {
+        document.getElementById('view-vouchers').classList.remove('hidden');
+        breadcrumb.innerText = 'Voucher & khuyến mãi';
+      } else if (tabId === 'orders') {
+        document.getElementById('view-orders').classList.remove('hidden');
+        breadcrumb.innerText = 'Quản lý đơn hàng';
+      } else if (tabId === 'products') {
+        document.getElementById('view-products').classList.remove('hidden');
+        breadcrumb.innerText = 'Quản lý sản phẩm';
+      } else {
+        document.getElementById('view-generic').classList.remove('hidden');
+        document.getElementById('genericTitle').innerText = tabId.charAt(0).toUpperCase() + tabId.slice(1);
+        breadcrumb.innerText = tabId;
+      }
+    }
+
+    function handleExportReport() {
+      alert('Báo cáo doanh thu và đơn hàng tháng 06/2024 đang được khởi tạo và tải về máy của bạn!');
+    }
+
+    // Initialize Chart.js
+    window.addEventListener('DOMContentLoaded', () => {
+      // 1. Revenue Line Chart
+      const ctxRevenue = document.getElementById('revenueChart').getContext('2d');
+      new Chart(ctxRevenue, {
+        type: 'line',
+        data: {
+          labels: ['01/06', '06/06', '11/06', '16/06', '21/06', '26/06'],
+          datasets: [
+            {
+              label: 'Tháng này',
+              data: [15, 28, 22, 38, 32, 58],
+              borderColor: '#3F4E37',
+              backgroundColor: 'rgba(63, 78, 55, 0.04)',
+              borderWidth: 2.5,
+              tension: 0.4,
+              fill: true,
+              pointRadius: 3,
+              pointBackgroundColor: '#3F4E37',
+            },
+            {
+              label: 'Tháng trước',
+              data: [12, 18, 19, 25, 29, 36],
+              borderColor: '#D4D2CA',
+              borderWidth: 2,
+              borderDash: [4, 4],
+              tension: 0.4,
+              fill: false,
+              pointRadius: 0,
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.dataset.label + ': ' + context.parsed.y + ' triệu đ';
+                }
+              }
+            }
+          },
+          scales: {
+            y: {
+              min: 0,
+              max: 60,
+              ticks: {
+                stepSize: 15,
+                callback: function(value) { return value + ' tr'; },
+                font: { size: 10, family: 'Plus Jakarta Sans' },
+                color: '#9CA3AF'
+              },
+              grid: {
+                color: '#F2F1ED',
+                drawBorder: false,
+              }
+            },
+            x: {
+              ticks: {
+                font: { size: 10, family: 'Plus Jakarta Sans' },
+                color: '#9CA3AF'
+              },
+              grid: { display: false }
+            }
+          }
+        }
+      });
+
+      // 2. Order Status Donut Chart
+      const ctxStatus = document.getElementById('orderStatusChart').getContext('2d');
+      new Chart(ctxStatus, {
+        type: 'doughnut',
+        data: {
+          labels: ['Hoàn thành', 'Đang giao', 'Đang xử lý', 'Đã hủy'],
+          datasets: [{
+            data: [348, 82, 38, 18],
+            backgroundColor: [
+              '#3F4E37',
+              '#6C835D',
+              '#D4A373',
+              '#E07A5F'
+            ],
+            borderWidth: 3,
+            borderColor: '#FFFFFF',
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '72%',
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return ' ' + context.label + ': ' + context.parsed + ' đơn';
+                }
+              }
+            }
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
