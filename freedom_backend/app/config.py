@@ -20,5 +20,6 @@ class Settings(BaseSettings):
     frontend_reset_url: str = 'http://localhost:5173/reset-password'
     shipping_fee: Decimal = Field(default=Decimal('30000'), ge=0)
     media_root: Path = Path(__file__).resolve().parents[1] / 'uploads'
+    store_address: str = 'Số 69 phố Tràng Tiền, TP. Hà Nội'
 
 settings = Settings()

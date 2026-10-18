@@ -4,6 +4,15 @@ from typing import Annotated, Literal
 from pydantic import Field, HttpUrl
 from .schemas import Input
 
+class ProductSizeInput(Input):
+    id: Annotated[int,Field(gt=0)] | None = None
+    size_name: Annotated[str,Field(min_length=1,max_length=30)]
+    color_name: Annotated[str,Field(min_length=1,max_length=60)]
+    price: Annotated[Decimal,Field(ge=0,max_digits=15,decimal_places=2)]
+    stock_quantity: Annotated[int,Field(ge=0,le=1000000)]
+    is_active: bool = True
+    expected_stock: Annotated[int,Field(ge=0)] | None = None
+
 class ProductsInput(Input):
     category_id: Annotated[int, Field(gt=0)]
     brand_id: Annotated[int, Field(gt=0)] | None = None
@@ -13,6 +22,7 @@ class ProductsInput(Input):
     material: Annotated[str, Field(min_length=1,max_length=150)] | None = None
     base_price: Annotated[Decimal, Field(ge=0,max_digits=15,decimal_places=2)]
     status: Literal['draft','active','archived'] = 'draft'
+    variants: list[ProductSizeInput] | None = Field(default=None,max_length=100)
 
 class ProductVariantsInput(Input):
     product_id: Annotated[int, Field(gt=0)]

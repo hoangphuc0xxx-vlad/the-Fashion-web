@@ -1,7 +1,8 @@
 from datetime import datetime, timezone
 from decimal import Decimal
+from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
-from sqlalchemy import select, update, delete, exists, and_, or_
+from sqlalchemy import select, update, delete, exists, and_, or_, func
 from .. import catalog_schemas as s
 from ..db import session, table, one, add, audit
 from ..security import require
@@ -24,6 +25,46 @@ def category_tree(category, root_id=None, name='visible_categories'):
     anchor=category.c.parent_id.is_(None) if root_id is None else category.c.id==root_id
     tree=select(category.c.id).where(anchor,category.c.is_active.is_(True)).cte(name,recursive=True)
     return tree.union_all(select(category.c.id).join(tree,category.c.parent_id==tree.c.id).where(category.c.is_active.is_(True)))
+
+
+def product_sizes(db,pid,active_only=False):
+    v,sz,col=table('product_variants'),table('sizes'),table('colors')
+    query=select(v,sz.c.name.label('size_name'),col.c.name.label('color_name')).join(sz,v.c.size_id==sz.c.id).join(col,v.c.color_id==col.c.id).where(v.c.product_id==pid)
+    if active_only:query=query.where(v.c.is_active.is_(True))
+    return db.execute(query.order_by(sz.c.sort_order,sz.c.id,col.c.id)).mappings().all()
+
+
+def save_product_sizes(db,pid,entries,user):
+    if entries is None:return
+    sizes,colors,variants=table('sizes'),table('colors'),table('product_variants')
+    # Same lock order as checkout: variants by ID. The product lock is held by caller.
+    old={v['id']:dict(v) for v in db.execute(select(variants).where(variants.c.product_id==pid).order_by(variants.c.id).with_for_update()).mappings()}
+    seen=set()
+    for entry in entries:
+        size_name=entry['size_name'].strip().upper();color_name=entry['color_name'].strip()
+        pair=(size_name,color_name.casefold())
+        if pair in seen:raise HTTPException(422,'Size và màu bị trùng trong sản phẩm')
+        seen.add(pair)
+        size=db.execute(select(sizes).where(or_(sizes.c.name==size_name,func.lower(sizes.c.name)==size_name.lower()))).mappings().first()
+        if not size:size=add(db,'sizes',{'name':size_name,'sort_order':0})
+        color=db.execute(select(colors).where(or_(colors.c.name==color_name,func.lower(colors.c.name)==color_name.lower()))).mappings().first()
+        if not color:color=add(db,'colors',{'name':color_name})
+        rid=entry.get('id')
+        previous=old.get(rid) if rid else next((v for v in old.values() if v['size_id']==size['id'] and v['color_id']==color['id']),None)
+        if rid and not previous:raise HTTPException(422,'Size không thuộc sản phẩm này')
+        if previous:
+            if previous['size_id']!=size['id'] or previous['color_id']!=color['id']:raise HTTPException(409,'Không đổi định danh size/màu cũ; ngừng bán dòng cũ rồi thêm dòng mới')
+            if entry.get('expected_stock') is not None and entry['expected_stock']!=previous['stock_quantity']:raise HTTPException(409,'Tồn kho vừa thay đổi do bán hàng. Mở lại sản phẩm trước khi sửa')
+            if entry['stock_quantity']<previous['reserved_quantity']:raise HTTPException(409,'Tồn kho không được thấp hơn số lượng đang giữ')
+        values=dict(price=entry['price'],stock_quantity=entry['stock_quantity'],is_active=entry['is_active'])
+        if previous:
+            row=db.execute(update(variants).where(variants.c.id==previous['id']).values(**values).returning(variants)).mappings().one()
+        else:
+            row=add(db,'product_variants',dict(product_id=pid,size_id=size['id'],color_id=color['id'],sku='FR-'+uuid4().hex,**values))
+        change=entry['stock_quantity']-(previous['stock_quantity'] if previous else 0)
+        if change and user.get('role')!='admin':require('inventory.manage')(user,db)
+        if change:add(db,'inventory_movements',dict(variant_id=row['id'],movement_type='adjustment' if previous else 'import',quantity_change=change,reference_type='product',reference_id=pid,note='Cập nhật size và tồn kho từ form sản phẩm',created_by=user['id']))
+        audit(db,user['id'],'save_size','product_variants',row['id'])
 
 
 @router.get('/catalog/products')
@@ -65,6 +106,7 @@ def detail(pid:int,db=Depends(session)):
         t=table(name);q=select(t).where(t.c.product_id==pid)
         if name=='product_variants':q=q.where(t.c.is_active.is_(True))
         row[name]=db.execute(q.order_by(t.c.id)).mappings().all()
+    row['product_variants']=product_sizes(db,pid,active_only=True)
     r=table('reviews');row['reviews']=db.execute(select(r).where(r.c.product_id==pid,r.c.status=='approved').order_by(r.c.id.desc()).limit(50)).mappings().all()
     ids=[x['id'] for x in row['reviews']];ri=table('review_images')
     row['review_images']=db.execute(select(ri).where(ri.c.review_id.in_(ids))).mappings().all() if ids else []
@@ -96,6 +138,7 @@ def staff_product_detail(rid:int,user=Depends(require('catalog.manage')),db=Depe
     for name in ('product_variants','product_images'):
         t=table(name)
         row[name]=db.execute(select(t).where(t.c.product_id==rid).order_by(t.c.id)).mappings().all()
+    row['product_variants']=product_sizes(db,rid)
     return row
 
 
@@ -169,20 +212,25 @@ def mount(name,model,permission):
         rows=db.execute(select(t).order_by(order).limit(limit).offset(offset)).mappings().all()
         return with_product_images(db,rows) if name=='products' else rows
     def create(body:model,user=Depends(require(permission)),db=Depends(session)):
-        values=body.model_dump();validate(db,name,values)
+        values=body.model_dump();entries=values.pop('variants',None) if name=='products' else None
+        validate(db,name,values)
         for k,v in list(values.items()):
             if hasattr(v,'unicode_string'):values[k]=str(v)
         if name=='products':values['created_by']=user['id']
         if name=='posts':values['author_id']=user['id']
-        row=add(db,name,values);audit(db,user['id'],'create',name,row['id']);return row
+        row=add(db,name,values)
+        if name=='products':save_product_sizes(db,row['id'],entries,user)
+        audit(db,user['id'],'create',name,row['id']);return row
     def replace(rid:int,body:model,user=Depends(require(permission)),db=Depends(session)):
         if name=='categories':
             t=table(name);db.execute(select(t.c.id).order_by(t.c.id).with_for_update()).all()
-        one(db,name,rid,lock=True);values=body.model_dump();validate(db,name,values,rid)
+        one(db,name,rid,lock=True);values=body.model_dump();entries=values.pop('variants',None) if name=='products' else None
+        validate(db,name,values,rid)
         for k,v in list(values.items()):
             if hasattr(v,'unicode_string'):values[k]=str(v)
         if name=='products':values['updated_at']=datetime.now(timezone.utc)
         t=table(name);row=db.execute(update(t).where(t.c.id==rid).values(**values).returning(t)).mappings().one()
+        if name=='products':save_product_sizes(db,rid,entries,user)
         audit(db,user['id'],'update',name,rid);return row
     def remove(rid:int,user=Depends(require(permission)),db=Depends(session)):
         one(db,name,rid,lock=True);t=table(name)

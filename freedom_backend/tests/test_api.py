@@ -1,6 +1,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime, timezone, timedelta
 from decimal import Decimal
+from uuid import uuid4
 import jwt
 import pytest
 from sqlalchemy import select, update
@@ -61,7 +62,7 @@ def prepare_checkout(client,user,vid,quantity=2):
     a=client.post('/me/addresses',headers=h,json=dict(recipient_name='P',phone='0912345678',province='HN',street_address='1 A'))
     assert a.status_code==201,a.text
     c=client.put('/me/cart/items',headers=h,json=dict(variant_id=vid,quantity=quantity));assert c.status_code==200,c.text
-    return h,dict(address_id=a.json()['id'],payment_method='cod')
+    return h,dict(address_id=a.json()['id'],payment_method='cod',checkout_key=uuid4().hex)
 
 def test_checkout_cancel_atomic(client,data):
     h,body=prepare_checkout(client,data['customer'],data['variant']['id'])
@@ -72,7 +73,7 @@ def test_checkout_cancel_atomic(client,data):
     assert client.post(f'/me/orders/{oid}/cancel',headers=h).status_code==200
     assert client.post(f'/me/orders/{oid}/cancel',headers=h).status_code==409
     with Session(engine) as db:assert db.scalar(select(table('product_variants').c.stock_quantity))==5
-    assert client.post('/me/checkout',headers=h,json=body).status_code==400
+    assert client.post('/me/checkout',headers=h,json={**body,'checkout_key':uuid4().hex}).status_code==400
 
 def test_concurrent_checkout_no_oversell(client,data):
     h,b=prepare_checkout(client,data['customer'],data['variant']['id'],4)
@@ -102,7 +103,7 @@ def test_logout_password_reset_and_review(client,data):
     assert Decimal(item['line_total'])==100000
     assert client.post('/me/reviews',headers=h,json={'order_item_id':item['id'],'rating':5}).status_code==409
     admin=headers(data['admin'])
-    for status in ('confirmed','preparing','shipped','delivered'):
+    for status in ('packing','shipping','delivered'):
         response=client.patch(f"/staff/orders/{order['id']}/status",headers=admin,json={'status':status})
         assert response.status_code==200,response.text
     assert client.post('/me/reviews',headers=h,json={'order_item_id':item['id'],'rating':5}).status_code==201
@@ -147,7 +148,7 @@ def test_catalog_moderation_payment_returns(client,data):
     assert all(x['slug']!='brand' for x in client.get('/catalog/lookups/brands').json())
     h,body=prepare_checkout(client,data['customer'],data['variant']['id'],2)
     order=client.post('/me/checkout',headers=h,json=body).json();oid=order['id']
-    for status in ('confirmed','preparing','shipped','delivered'):
+    for status in ('packing','shipping','delivered'):
         assert client.patch(f'/staff/orders/{oid}/status',headers=admin,json={'status':status}).status_code==200
     pay=f'/admin/orders/{oid}/confirm-payment'
     assert client.post(pay,headers=staff,json={'transaction_id':'COD-1'}).status_code==403

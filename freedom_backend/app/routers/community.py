@@ -87,7 +87,8 @@ def handle_return(rid:int,body:s.ReturnStatus,user=Depends(require('returns.read
 
 @router.get('/staff/inventory')
 def inventory(limit:int=Query(50,ge=1,le=100),offset:int=Query(0,ge=0),user=Depends(require('inventory.read')),db=Depends(session)):
-    t=table('product_variants');return db.execute(select(t).order_by(t.c.id).limit(limit).offset(offset)).mappings().all()
+    t,p,sz,col=table('product_variants'),table('products'),table('sizes'),table('colors')
+    return db.execute(select(t,p.c.name.label('product_name'),sz.c.name.label('size_name'),col.c.name.label('color_name'),(t.c.stock_quantity-t.c.reserved_quantity).label('available_quantity')).join(p,t.c.product_id==p.c.id).join(sz,t.c.size_id==sz.c.id).join(col,t.c.color_id==col.c.id).order_by(t.c.id).limit(limit).offset(offset)).mappings().all()
 
 @router.get('/staff/inventory/{vid}/movements')
 def movements(vid:int,limit:int=Query(50,ge=1,le=100),offset:int=Query(0,ge=0),user=Depends(require('inventory.read')),db=Depends(session)):

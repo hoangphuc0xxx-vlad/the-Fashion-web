@@ -27,6 +27,14 @@ export function productPayload(values) {
     description: values.description.trim() || null, status: values.status,
   };
 }
+export function variantRowHtml(variant = {}, price = '') {
+  return `<div class="size-editor-row" data-variant-row data-id="${esc(variant.id || '')}" data-stock="${esc(variant.stock_quantity ?? '')}"><div class="form-grid"><label>Size<input data-size-name list="product-size-options" maxlength="30" value="${esc(variant.size_name)}" placeholder="S, M, L, XL, 30, 32…" ${variant.id ? 'readonly' : ''} required></label><label>Màu<input data-color-name maxlength="60" value="${esc(variant.color_name || 'Mặc định')}" ${variant.id ? 'readonly' : ''} required></label></div><div class="form-grid"><label>Giá bán (₫)<input data-variant-price type="number" min="0" max="9999999999999.99" step="0.01" value="${esc(variant.price ?? price)}" required></label><label>Số lượng trong kho<input data-variant-stock type="number" min="${Number(variant.reserved_quantity || 0)}" max="1000000" step="1" value="${esc(variant.stock_quantity ?? 0)}" required></label></div><label class="size-active"><input data-variant-active type="checkbox" ${variant.is_active !== false ? 'checked' : ''}> Đang bán size này</label>${variant.id ? '<small>Size/màu cũ được giữ để bảo toàn lịch sử đơn. Bỏ chọn để ngừng bán.</small>' : '<button type="button" class="text-action" data-action="remove-size-row">Bỏ dòng size</button>'}</div>`;
+}
+export function readProductVariants(form) {
+  const rows = [...form.querySelectorAll('[data-variant-row]')];
+  if (!rows.length) return undefined;
+  return rows.map(row => ({ ...(row.dataset.id ? { id: Number(row.dataset.id), expected_stock: Number(row.dataset.stock) } : {}), size_name: row.querySelector('[data-size-name]').value.trim(), color_name: row.querySelector('[data-color-name]').value.trim(), price: row.querySelector('[data-variant-price]').value, stock_quantity: Number(row.querySelector('[data-variant-stock]').value), is_active: row.querySelector('[data-variant-active]').checked }));
+}
 function lookupOptions(items, selected, fallback, empty = false) {
   const choices = [...items];
   if (selected && !choices.some(i => String(i.id) === String(selected))) choices.push({ id: selected, name: fallback || `#${selected} (đã ngừng dùng)` });
@@ -42,8 +50,9 @@ export function productEditorHtml(product, categories, brands, pendingImage = nu
     <div class="form-grid"><label>Giá niêm yết (₫)<input name="base_price" value="${esc(p.base_price)}" type="number" min="0" max="9999999999999.99" step="0.01" required></label><label>Trạng thái<select name="status">${Object.entries(productStatuses).map(([key, name]) => `<option value="${key}" ${(p.status || 'draft') === key ? 'selected' : ''}>${name}</option>`).join('')}</select></label></div>
     <label>Chất liệu<input name="material" value="${esc(p.material)}" maxlength="150"></label>
     <label>Mô tả<textarea name="description" rows="5" maxlength="50000">${esc(p.description)}</textarea></label>
+    <fieldset class="product-size-editor"><legend>Size, màu và tồn kho</legend><p class="ad-form-note">Thêm từng size để khách chọn mua. Nhập tồn thực tế; số lượng sẽ trừ khi khách xác nhận đơn.</p><datalist id="product-size-options">${['XS','S','M','L','XL','XXL','3XL','28','29','30','31','32','33','34','36','38','40','42','44','46','48','50','52'].map(size => `<option value="${size}"></option>`).join('')}</datalist><div id="product-size-rows">${((p.variants || p.product_variants || []).length ? p.variants || p.product_variants : [{}]).map(variant => variantRowHtml(variant, p.base_price)).join('')}</div><p class="stock-total">Tổng số lượng trong kho: <strong id="product-stock-total">${(p.variants || p.product_variants || []).reduce((sum, variant) => sum + Number(variant.stock_quantity || 0), 0)}</strong></p><button type="button" class="text-action" data-action="add-size-row">+ Thêm size / màu</button></fieldset>
     <fieldset class="product-image-editor"><legend>Ảnh sản phẩm</legend><div id="product-image-preview" class="product-image-preview" aria-live="polite">${productImagePreviewHtml(p, pendingImage)}</div><label>Chọn một hoặc nhiều ảnh từ máy<input id="product-image-file" name="image_file" type="file" accept="image/jpeg,image/png,image/webp" multiple aria-describedby="product-image-help"></label><p id="product-image-help" class="ad-form-note">Chọn tối đa 8 ảnh mỗi lần, JPG/PNG/WebP, mỗi ảnh tối đa 5 MB. Ảnh đầu tiên làm ảnh đại diện; các ảnh tự trượt trên thẻ sản phẩm, tên và giá giữ nguyên bên dưới. Bộ ảnh mới được thêm khi lưu, ảnh đã có vẫn được giữ.</p></fieldset>
-    <p class="ad-form-note">Chọn Đang bán để hiển thị sản phẩm ở cửa hàng. Size/màu, giá theo biến thể và tồn kho được quản lý riêng để khách có thể đặt mua.</p>
+    <p class="ad-form-note">Chọn Đang bán để hiển thị sản phẩm. Khách mua được những size đang bán và còn tồn kho.</p>
     <p class="form-error" role="alert"></p><div class="inline-actions"><button type="submit" class="ad-btn ad-btn-primary">${p.id ? 'Lưu thay đổi' : 'Thêm sản phẩm'}</button><button type="button" class="ad-btn" data-action="close">Hủy</button></div>
   </form>`;
 }

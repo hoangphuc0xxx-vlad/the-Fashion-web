@@ -28,6 +28,7 @@ const categories = [
 const product = { id: 1, name: 'Áo sơ mi', slug: 'ao-so-mi', category_id: 4, brand_id: 1, category: categories[3], brand: { id: 1, name: 'Freedom' }, description: 'Mô tả gốc', base_price: 549000, material: 'Linen', status: 'active', product_variants: [], product_images: [] };
 const productList = [product];
 const order = { id: 1, order_code: 'FR-TEST', recipient_name: 'Khách hàng', recipient_phone: '0901234567', status: 'pending', total_amount: 549000, placed_at: new Date().toISOString() };
+let testCart = [], testOrders = [], checkoutFailure = false;
 const response = (data, status = 200) => ({ ok: status < 400, status, json: async () => structuredClone(data) });
 globalThis.fetch = async (url, init) => {
   const parsed = new URL(url); const path = parsed.pathname; requests.push({ path, url, ...init });
@@ -41,6 +42,24 @@ globalThis.fetch = async (url, init) => {
     return response([product]);
   }
   if (path === '/catalog/products/1') return response(product);
+  if (path === '/catalog/checkout-config') return response({ shipping_fee: 30000, store_address: 'Số 69 Tràng Tiền, Hà Nội' });
+  if (path === '/me/cart') return response(testCart);
+  if (path === '/me/cart/items') {
+    const body = JSON.parse(init.body), item = testCart.find(row => row.variant_id === body.variant_id);
+    if (item) item.quantity = body.quantity;
+    else testCart.push({ variant_id: body.variant_id, product_name: product.name, size_name: 'M', color_name: 'Đen', quantity: body.quantity, price: 500000, stock_quantity: 20, reserved_quantity: 0, is_active: true, product_status: 'active' });
+    testCart = testCart.filter(item => item.quantity > 0); return response({});
+  }
+  if (path === '/me/checkout') {
+    const body = JSON.parse(init.body);
+    if (checkoutFailure) return response({ detail: 'Mạng chậm, vui lòng thử lại' }, 503);
+    const existing = testOrders.find(order => order.checkout_key === body.checkout_key);
+    if (existing) return response(existing, 201);
+    const created = { ...body, id: 100 + testOrders.length, order_code: 'FR-NEW-' + testOrders.length, status: 'pending', total_amount: body.expected_total, shipping_fee: body.fulfillment_method === 'pickup' ? 0 : 30000, subtotal: body.expected_total - (body.fulfillment_method === 'pickup' ? 0 : 30000), order_items: [] };
+    testOrders.push(created); testCart = testCart.filter(item => !body.variant_ids.includes(item.variant_id)); return response(created, 201);
+  }
+  if (path === '/me/orders') return response(testOrders);
+  if (/^\/me\/orders\/\d+$/.test(path)) return response(testOrders.find(order => order.id === Number(path.split('/').pop())));
   if (forceForbidden) return response({ detail: 'Không có quyền thực hiện' }, 403);
   if (path === '/admin/dashboard') return response({ orders: 1, delivered_gross_revenue: 0, customers_total: 1, top_products: [] });
   if (path === '/staff/orders') return response([order]);
@@ -82,7 +101,7 @@ globalThis.FormData = class {
   *[Symbol.iterator]() { yield* this.values; }
 };
 const submit = async (id, values, dataset = {}) => {
-  const form = { id, values, dataset, querySelector: s => element(s === '.form-error' ? '#test-form-error' : '#test-submit-button') };
+  const form = { id, values, dataset, querySelectorAll: () => [], querySelector: s => element(s === '.form-error' ? '#test-form-error' : '#test-submit-button') };
   await handlers.submit({ preventDefault() {}, target: form });
 };
 await import('./app.js');
@@ -150,8 +169,8 @@ actor = { id: 2, role: 'staff', status: 'active', full_name: 'Nhân viên', perm
 sessionStorage.setItem('freedom-token', 'staff-token');
 assert.equal(can(actor, 'audit.read'), false); assert.equal(can(actor, 'users.manage'), false); assert.equal(canVisit(actor, 'orders'), true);
 await navigate('orders'); assert.match(element('#app').innerHTML, /data-route="orders"/); assert.doesNotMatch(element('#app').innerHTML, /data-route="users"|data-route="products"|data-route="audit"|data-route="settings"/);
-await click({ order: '1' }); assert.match(element('#modal').innerHTML, /Chuyển sang: Đã xác nhận/);
-await click({ transition: '1', status: 'confirmed' }); assert.match(element('#table-content').innerHTML, /Đã xác nhận/);
+await click({ order: '1' }); assert.match(element('#modal').innerHTML, /Xác nhận — Đang đóng gói/);
+await click({ transition: '1', status: 'packing' }); assert.match(element('#table-content').innerHTML, /Đang đóng gói/);
 await navigate('inventory'); await click({ record: '1' }); assert.doesNotMatch(element('#modal').innerHTML, /stock-form/); // read permission never exposes stock mutation.
 await navigate('dashboard'); assert.match(element('#app').innerHTML, /Không có quyền truy cập/);
 actor.permissions = [];
@@ -215,8 +234,45 @@ await navigate('store'); assert.match(element('#app').innerHTML, /href="#\/store
 assert.match(element('#product-grid').innerHTML, /<img src="http:\/\/127\.0\.0\.1:8000\/media\/products\//);
 await click({ product: '1' }); assert.match(element('#modal').innerHTML, /Sơ mi đã sửa/);
 assert.match(element('#modal').innerHTML, /class="product-gallery gallery-detail" data-gallery-count="2"/);
+
+// Exercise actual delegated handlers for cart selection and both order methods.
+actor = { id: 20, role: 'customer', status: 'active', full_name: 'Khách mua thật', email: 'customer@example.com', permissions: [] };
+sessionStorage.setItem('freedom-token', 'customer-token');
+await navigate('orders'); await navigate('store');
+product.product_variants = [{ id: 10, size_name: 'M', color_name: 'Đen', price: 500000, stock_quantity: 20, reserved_quantity: 0, is_active: true }];
+await click({ product: '1' }); assert.match(element('#modal').innerHTML, /Size M/);
+await submit('add-cart-form', { variant_id: '10', quantity: '2' });
+assert.equal(testCart[0].quantity, 2); assert.equal(element('#cart-count').textContent, 2);
+testCart.push({ ...testCart[0], variant_id: 11, size_name: 'L', quantity: 1 });
+await click({ action: 'cart' });
+assert.equal(element('#cart-checkout-actions').hidden, true);
+await click({ action: 'checkout-delivery' });
+assert.equal(testOrders.length, 0); assert.match(element('#toast').textContent, /Chọn ít nhất/);
+await handlers.change({ target: { dataset: { cartSelect: '10' }, checked: true } });
+assert.equal(element('#cart-checkout-actions').hidden, false);
+await click({ action: 'checkout-delivery' });
+assert.match(element('#modal').innerHTML, /Xác nhận đặt hàng/); assert.match(element('#modal').innerHTML, /name="shipping_address"/);
+assert.equal(requests.filter(request => request.path === '/me/checkout').length, 0);
+const receiver = { recipient_name: 'Người nhận', recipient_phone: '0912345678', shipping_address: '10 Tràng Tiền, Hà Nội', customer_note: '' };
+checkoutFailure = true; await submit('checkout-form', receiver);
+assert.match(element('#test-form-error').textContent, /Mạng chậm/);
+const firstKey = JSON.parse(requests.findLast(request => request.path === '/me/checkout').body).checkout_key;
+checkoutFailure = false; await submit('checkout-form', receiver);
+assert.equal(testOrders.length, 1); assert.deepEqual(testOrders[0].variant_ids, [10]); assert.equal(testOrders[0].checkout_key, firstKey);
+assert.equal(testCart.length, 1); assert.equal(testCart[0].variant_id, 11); assert.equal(element('#cart-count').textContent, 1);
+await click({ action: 'cart' }); await handlers.change({ target: { dataset: { cartSelect: '11' }, checked: true } });
+await click({ action: 'checkout-pickup' }); assert.match(element('#modal').innerHTML, /name="pickup_date"/); assert.match(element('#modal').innerHTML, /name="pickup_to"/);
+await submit('checkout-form', { recipient_name: 'Người lấy', recipient_phone: '0912345678', recipient_email: 'customer@example.com', pickup_date: '2030-01-01', pickup_from: '09:00', pickup_to: '10:00', customer_note: '' });
+assert.equal(testOrders.length, 2); assert.equal(testOrders[1].fulfillment_method, 'pickup'); assert.match(testOrders[1].pickup_start, /\+07:00$/);
+assert.match(element('#modal').innerHTML, /Đã đặt trước thành công/); assert.equal(element('#cart-count').textContent, 0);
+await click({ action: 'my-orders' }); assert.match(element('#modal').innerHTML, /FR-NEW-0/); assert.match(element('#modal').innerHTML, /FR-NEW-1/);
+testOrders[0].status = 'packing'; await click({ myOrder: '100' });
+assert.match(element('#modal').innerHTML, /status-blue/); assert.match(element('#modal').innerHTML, /Đang đóng gói/);
+testOrders[0].status = 'shipping'; await click({ myOrder: '100' }); assert.match(element('#modal').innerHTML, /status-yellow/);
+testOrders[0].status = 'failed'; await click({ myOrder: '100' }); assert.match(element('#modal').innerHTML, /status-red/);
+testOrders[0].status = 'delivered'; await click({ myOrder: '100' }); assert.match(element('#modal').innerHTML, /status-green/);
 globalThis.fetch = async () => { throw new Error('offline'); };
 await assert.rejects(api('/ready'), /Không kết nối được cửa hàng/);
-console.log('PASS: RBAC, product CRUD, image selection/preview/upload/retry without duplicate products, storefront images, dynamic categories, banners and footer. Simulated DOM/API, not browser QA.');
+console.log('PASS: RBAC, product CRUD, images, selected cart checkout, recipient confirmation, pickup scheduling, retry key, remaining cart and customer order statuses. Simulated DOM/API, not browser QA.');
 await import('./verify-gallery.mjs');
 process.exit(0);

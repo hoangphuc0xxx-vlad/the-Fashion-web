@@ -52,18 +52,20 @@ Chặn frontend là phần trải nghiệm. Bảo vệ dữ liệu nằm ở `cu
 - Danh sách quản lý: đơn hàng, sản phẩm, danh mục/thương hiệu, tồn kho, khách hàng, voucher, đánh giá, banner/bài viết, đổi trả, hỗ trợ, nhân viên và nhật ký.
 - Tìm kiếm/lọc **trong trang hiện tại**. API tải tối đa 100 bản ghi mỗi trang; có nút chuyển trang.
 - Chi tiết đơn và chuyển trạng thái theo luồng backend; CRUD sản phẩm trên frontend; điều chỉnh tồn kho kèm lý do.
-- Cửa hàng: bộ sưu tập, lọc danh mục, tìm kiếm, sắp xếp, chi tiết sản phẩm, chọn biến thể còn hàng, giỏ hàng, đăng ký/đăng nhập, thêm địa chỉ và đặt đơn COD/chuyển khoản qua API.
+- Cửa hàng: bộ sưu tập, lọc danh mục, tìm kiếm, sắp xếp, chọn size/màu còn hàng, giỏ hàng chọn nhiều dòng, đặt COD giao tận nơi hoặc đặt trước lấy tại cửa hàng, theo dõi Đơn của tôi.
 - Responsive cho điện thoại, menu thu gọn, dialog bàn phím, trạng thái rỗng/lỗi/đang tải.
 
 Tất cả nghiệp vụ dùng API thật. Backend không khả dụng thì hiển thị lỗi; không tự thay thế bằng sản phẩm, đơn hoặc khách hàng mẫu. Ảnh hero là tài nguyên thiết kế, không phải sản phẩm tự sinh trong database.
 
 Dashboard API dùng tổng doanh thu đơn đã giao và tổng đơn trong kỳ từ `/admin/dashboard`. Biểu đồ, phân bổ trạng thái và số đơn hoàn thành tính từ **tối đa 100 đơn gần nhất**; tổng khách hàng là số toàn cửa hàng. Không hiển thị tăng trưởng giả. Không có endpoint thống kê chuỗi thời gian đầy đủ nên biểu đồ chưa đại diện toàn bộ lịch sử khi có hơn 100 đơn.
 
-Các màn hình ngoài đơn hàng, sản phẩm và tồn kho hiện hỗ trợ đọc/lọc/chi tiết; chưa có đầy đủ biểu mẫu CRUD hay giao diện chỉnh quyền nhân viên. Thiết lập biến thể dùng Swagger backend; ảnh đại diện có thể tải trực tiếp trong form sản phẩm. API danh sách và chi tiết trả ảnh để hiển thị cả ở admin và cửa hàng. Chuyển khoản chưa tích hợp cổng thanh toán; backend tạo đơn chờ đối soát thủ công. Chưa có màn hình khách hàng theo dõi đơn sau mua.
+Các màn hình ngoài đơn hàng, sản phẩm và tồn kho hiện hỗ trợ đọc/lọc/chi tiết; chưa có đầy đủ biểu mẫu CRUD hay giao diện chỉnh quyền nhân viên. Size, màu, giá và số lượng tồn được nhập trực tiếp trong form sản phẩm, cùng ảnh đại diện. API trả dữ liệu thật cho admin và cửa hàng. Giao diện checkout dùng COD; chưa tích hợp cổng thanh toán. Khách theo dõi đơn qua nút Đơn của tôi.
 
 ## Thêm, xem, sửa, xóa sản phẩm trên frontend
 
 Vào **http://localhost:5173/#/products** sau khi đăng nhập admin hoặc staff có quyền `catalog.manage`.
+
+Trong **Size, màu và tồn kho**, nhập từng size/màu, giá và **Số lượng trong kho**. Có tổng số lượng bên dưới và nút thêm dòng. Lưu sản phẩm đồng thời lưu số lượng vào quản lý kho và ghi biến động. Staff thay đổi tồn cần thêm `inventory.manage`. Khi tồn đã đổi trong lúc mở form, tải lại trước khi sửa để tránh ghi đè số vừa bán. Sản phẩm cũ chưa có size cần bổ sung size và tồn để khách mua.
 
 - **Thêm sản phẩm**: nhập tên, slug (tự gợi ý theo tên), danh mục theo cây (ví dụ Áo → Áo sơ mi), thương hiệu tùy chọn, giá, chất liệu, mô tả và trạng thái. Trong **Ảnh sản phẩm**, chọn một hoặc nhiều ảnh JPG/PNG/WebP từ máy (tối đa 8 ảnh/lần, mỗi ảnh tối đa 5 MB), xem trước rồi bấm Thêm sản phẩm. Ảnh đầu tiên của bộ mới làm đại diện; các ảnh cũ được giữ sau bộ mới. Có thể tạo danh mục con ngay trong biểu mẫu, chọn danh mục cha; dữ liệu sản phẩm và ảnh vừa chọn được giữ khi quay lại và danh mục vừa tạo được chọn tự động.
 - **Xem**: đọc thông tin đầy đủ từ API quản trị, gồm sản phẩm nháp/lưu trữ và bảng biến thể hiện có.
@@ -71,15 +73,25 @@ Vào **http://localhost:5173/#/products** sau khi đăng nhập admin hoặc sta
 - **Xóa**: hiện hộp xác nhận trước khi gọi `DELETE`. Backend chuyển sản phẩm sang `archived`, giữ nguyên biến thể và lịch sử đơn hàng. Mặc định danh sách ẩn sản phẩm đã xóa.
 - **Khôi phục**: chọn bộ lọc “Đã xóa / lưu trữ”, bấm Sửa và đổi lại trạng thái.
 
-Giá niêm yết và giá từng biến thể được lưu riêng theo schema hiện có. Sản phẩm `active` thuộc danh mục đang hoạt động sẽ xuất hiện trong bộ sưu tập, kể cả chưa có biến thể; sản phẩm nháp/lưu trữ được ẩn. Khách chỉ thêm vào giỏ khi có biến thể hoạt động còn hàng. Các biến thể và nhập kho không tự sinh khi thêm sản phẩm. Ảnh đại diện xuất hiện trong bảng admin; nhiều ảnh sẽ tự trượt từ phải sang trái mỗi 3,5 giây trên từng thẻ sản phẩm và trong chi tiết, giữ tên/giá cố định bên dưới. Một ảnh không chạy slideshow. Rê chuột, tập trung bàn phím, chuyển tab hoặc cuộn ảnh khỏi màn hình sẽ tạm dừng; có nút điều hướng và dừng/chạy. Tùy chọn giảm chuyển động của hệ thống sẽ tắt tự chạy. Hiệu ứng rê chuột áp dụng cho sản phẩm, banner và danh mục.
+Giá niêm yết và giá từng size được lưu riêng. Sản phẩm `active` thuộc danh mục đang hoạt động sẽ xuất hiện trong bộ sưu tập, kể cả chưa có biến thể; sản phẩm nháp/lưu trữ được ẩn. Khách chỉ thêm vào giỏ khi có size hoạt động còn hàng. Biến thể và tồn được tạo từ các dòng size nhập trong form. Ảnh đại diện xuất hiện trong bảng admin; nhiều ảnh tự trượt từ phải sang trái mỗi 3,5 giây, giữ tên/giá bên dưới. Một ảnh không chạy slideshow. Rê chuột, tập trung bàn phím, chuyển tab hoặc cuộn ảnh khỏi màn hình sẽ tạm dừng; có nút điều hướng và dừng/chạy. Tùy chọn giảm chuyển động tắt tự chạy. Hiệu ứng rê chuột áp dụng cho sản phẩm, banner và danh mục.
 
 Nếu lưu thông tin thành công nhưng tải ảnh lỗi, biểu mẫu giữ ID đã tạo và bộ ảnh đang chọn để thử lại bằng Lưu thay đổi, tránh tạo trùng sản phẩm. Bộ ảnh được kiểm tra toàn bộ trước khi cập nhật DB. Quyền được kiểm tra ở cả frontend và backend; thao tác lưu/xóa/tải ảnh ghi audit log. Không thay schema hoặc dùng dữ liệu giả.
 
 Ảnh và CSS tham chiếu được sao chép từ bản lưu người dùng cung cấp trong `n`. Backend bổ sung quyền hiệu lực vào `/auth/me`; schema và dữ liệu phân quyền không bị thay đổi.
 
+## Giỏ hàng và đặt hàng
+
+Khách chọn size/màu và số lượng trước khi thêm giỏ. Huy hiệu giỏ hiển thị tổng số lượng. Chọn ít nhất một dòng trong giỏ mới hiện hai nút: **Đặt trước và lấy tại cửa hàng** và **Đặt hàng**. Chỉ các dòng đã chọn được đưa vào đơn; dòng khác giữ nguyên.
+
+Giao hàng yêu cầu tên, số điện thoại và địa chỉ đầy đủ. Lấy tại cửa hàng yêu cầu tên, số điện thoại, email, ngày và khoảng giờ đến lấy. Chỉ khi xác nhận form cuối mới tạo đơn và trừ tồn. Khách theo dõi tại **Đơn của tôi**; admin thấy thông tin nhận hàng/lịch lấy trong chi tiết đơn. Trạng thái đóng gói xanh dương, vận chuyển vàng, đã giao xanh lá, giao thất bại đỏ.
+
+Trước khi chạy bản mới, thực hiện `python -m app.migrate` tại backend. Xem [luồng chi tiết và kiểm thử](../freedom_backend/docs/CHECKOUT_SIZE_INVENTORY.md). Chưa triển khai đăng nhập Google theo yêu cầu hiện tại.
+
 ## Menu Áo – Quần – Suit và danh mục con
 
 Cửa hàng có ba nhóm chính **Áo**, **Quần**, **Suit**. Menu con lấy trực tiếp từ cây `categories.parent_id` trong DB, không ghi cứng danh sách áo sơ mi, áo khoác, hoodie, sweater… Danh mục con mới tạo sẽ xuất hiện khi mở lại cửa hàng hoặc tải lại trang.
+
+Trên máy tính, rê chuột lên Áo/Quần/Suit để tự mở menu con; di chuột xuống danh sách để chọn, rời khỏi vùng menu để đóng. Chỉ một menu mở tại một thời điểm. Trên điện thoại vẫn chạm để mở/đóng. Bàn phím dùng Tab và Enter/Space; Escape đóng menu và đưa tiêu điểm về tên nhóm.
 
 1. Trong admin, chọn **Thêm/Sửa sản phẩm → Tạo danh mục mới**, hoặc **Danh mục & thương hiệu → Tạo danh mục con**.
 2. Chọn cha Áo, Quần, Suit (hoặc danh mục con sâu hơn), nhập tên và slug, rồi lưu.
@@ -98,6 +110,8 @@ Lệnh chỉ thêm các gốc `ao`, `quan`, `suit` còn thiếu, không tự chu
 
 ## Kiểm tra cú pháp
 
+Giao diện khách hàng dùng **Cormorant Garamond** cho tiêu đề, logo và tên nhóm danh mục trên banner; **Manrope** cho nội dung, điều hướng, tên sản phẩm, giá và nút. Kiểu chữ được khai báo trong `storefront-type.css`, hỗ trợ responsive và các hộp thoại mua hàng. Font WOFF2 có bộ ký tự tiếng Việt được lưu trong `assets/fonts/`, kèm nguồn và giấy phép; website tải font từ máy chủ của dự án. `storefront-fonts.css` khai báo các subset và dùng `font-display: swap`.
+
 Banner riêng cho **Áo, Quần, Suit** dùng ảnh ImageGen 1536 × 1024 trong `assets/category-*-v1.png`. Trang danh mục con kế thừa banner theo danh mục gốc, giữ nguyên tên danh mục con trong tiêu đề. Prompt và nguồn ảnh được ghi trong `assets/category-banner-notes.md`.
 
 Trang chủ có thêm ba banner liên kết Áo, Quần, Suit, dùng bộ ảnh ImageGen riêng 1024 × 1536 tại `assets/home-category-*-v1.png`, khác ảnh trên trang danh mục. Bộ ảnh và prompt đầy đủ nằm trong `assets/home-category-banner-notes.md`. Banner tải ảnh khi gần vùng hiển thị và xếp thành một cột trên điện thoại. Nội dung banner và chân trang nằm trong `storefront-content.js`.
@@ -111,6 +125,6 @@ npm test
 
 `npm test` kiểm tra phân quyền và CRUD sản phẩm trên frontend: biểu mẫu sửa đầy đủ trường, thêm/xem, xác nhận hoặc hủy xóa, ẩn/khôi phục sản phẩm, tạo danh mục, lỗi API và escape nội dung. Kiểm thử frontend dùng DOM/API mô phỏng, không thay thế trình duyệt thật.
 
-Backend có `tests/test_access.py`, `tests/test_product_crud.py` và `tests/test_product_images.py` kiểm tra xác thực, phân quyền và CRUD thật qua FastAPI với SQLite trong bộ nhớ, gồm vòng đời thêm/sửa/xóa/khôi phục, hiển thị sản phẩm chưa có biến thể, tải nhiều ảnh và rollback bộ ảnh lỗi. Chạy `python -m pytest -q` tại `freedom_backend`. Bộ kiểm thử đạt **45 passed, 8 skipped**; 8 bài tích hợp PostgreSQL bỏ qua vì chưa cấu hình DB test riêng. `verify-gallery.mjs` kiểm tra đồng hồ tự chạy, hướng trượt, lặp vòng, dừng/chạy và thu hồi timer. Không chạy kiểm thử xóa dữ liệu trên DB bán hàng.
+Backend kiểm thử xác thực, phân quyền, CRUD, ảnh, size/tồn, checkout chọn dòng và xử lý đơn. Chạy `python -m pytest -q` tại `freedom_backend`: **58 passed, 11 skipped**. Ba bài PostgreSQL chạy riêng bằng `python -m app.verify_postgres_checkout` kiểm tra DB thật và xác nhận đồng thời trên DB tạm. Frontend cũng kiểm thử giỏ chọn dòng, xác nhận người nhận, đặt trước, thử lại cùng khóa và theo dõi trạng thái. `verify-gallery.mjs` kiểm tra tự chạy, hướng trượt, lặp vòng và thu hồi timer. Không chạy kiểm thử xóa dữ liệu trên DB bán hàng.
 
 Chưa kiểm chứng hiển thị desktop/mobile bằng trình duyệt tự động hóa hoặc tích hợp với PostgreSQL đang chạy. Ảnh bản lưu có độ phân giải thấp. Các giới hạn chức năng nêu trên vẫn cần hoàn thiện trước khi coi đây là toàn bộ hệ thống bán hàng đã nghiệm thu.

@@ -4,7 +4,7 @@ Backend FastAPI cho database PostgreSQL đã cung cấp. Ưu tiên phần Phúc 
 
 ## Chạy Ubuntu 24.04+
 
-Python 3.12+; PostgreSQL 12+ theo SQL gốc (đã kiểm thử trên PostgreSQL 18.6). Không cần Alembic vì bản này không thay đổi schema.
+Python 3.12+; PostgreSQL 12+ theo SQL gốc (đã kiểm thử trên PostgreSQL 18.6). Các thay đổi bổ sung dùng migration SQL chạy rõ ràng trước khi khởi động.
 
 ```bash
 sudo apt update
@@ -40,6 +40,7 @@ psql -h localhost -U freedom -d freedom -v ON_ERROR_STOP=1 -fdatabase/schema.sql
 Nếu **đã import SQL trước đây**, bỏ qua bước import; chỉ sửa DATABASE_URL. Tệp gốc không phải migration có thể chạy lặp. Khi database được sở hữu bởi user khác, cần cấp quyền CONNECT, USAGE schema, SELECT/INSERT/UPDATE/DELETE trên 31 bảng và USAGE/SELECT trên identity sequences cho user API; reflection cần quyền đọc metadata. Khởi chạy ứng dụng không thực thi DDL.
 
 ```bash
+python -m app.migrate
 python -m app.bootstrap --admin-email phuc@example.com
 uvicorn app.main:app --host 127.0.0.1 --port 8000 --reload
 ```
@@ -67,11 +68,11 @@ Cấu hình SMTP_HOST, SMTP_PORT, SMTP_STARTTLS, SMTP_USERNAME/PASSWORD, MAIL_FR
 
 ## Thử một luồng trong Swagger
 
-1. Đăng nhập Admin. Tạo categories, sizes, colors, products (status `active`) và product_variants trong `/staff/catalog/*`. `PUT` là thay toàn bộ dữ liệu cho phép, không phải PATCH; dữ liệu thiếu lấy mặc định theo schema request. Stock không được ghi bằng CRUD SKU.
-2. Admin nhập tồn bằng `/staff/inventory/{vid}/adjust` với quantity_change dương và note.
-3. Đăng ký customer, đăng nhập, thêm địa chỉ qua `/me/addresses`, thêm SKU bằng `PUT /me/cart/items`. quantity=0 xóa dòng.
-4. `POST /me/checkout` với address_id, payment_method `cod` hoặc `bank_transfer`; coupon_code tùy chọn. Giá/phí/giảm giá do server tính. Checkout thành công làm rỗng giỏ.
-5. Customer xem `/me/orders/{oid}`; Admin/staff xử lý status qua confirmed → preparing → shipped → delivered. Hủy chỉ pending/confirmed chưa thu tiền.
+1. Đăng nhập Admin. Tạo danh mục và sản phẩm `active` trong `/staff/catalog/*`; form sản phẩm hỗ trợ `variants` gồm size, màu, giá và số lượng tồn. `PUT` thay toàn bộ dữ liệu sản phẩm cho phép; bỏ `variants` sẽ giữ biến thể hiện có.
+2. Số lượng nhập cùng sản phẩm được ghi vào kho. Điều chỉnh bổ sung qua `/staff/inventory/{vid}/adjust` với quantity_change và note.
+3. Đăng ký customer, đăng nhập và thêm SKU bằng `PUT /me/cart/items`. quantity=0 xóa dòng.
+4. `POST /me/checkout` với `checkout_key`, các `variant_ids` đã chọn, thông tin người nhận và `fulfillment_method` delivery/pickup. Gửi `expected_total`, `expected_quantities` để phát hiện thay đổi trước xác nhận. Chỉ các dòng đã chọn bị xóa khỏi giỏ khi thành công.
+5. Customer xem `/me/orders/{oid}`; Admin/staff xử lý pending → packing → shipping → delivered/failed. Đơn pickup đi từ packing đến delivered. Chi tiết trường, trạng thái và quy tắc hoàn kho: [Size, số lượng và đặt hàng](docs/CHECKOUT_SIZE_INVENTORY.md).
 6. Admin xác nhận giao dịch thanh toán thực tế bằng confirm-payment; mã transaction_id duy nhất. COD cần delivered. Đổi trả/hoàn tiền là đối soát thủ công theo phân tích.
 7. Customer gửi review sau delivered; Admin duyệt approved/hidden/pending. Nhân viên chỉ đọc/flag, không được duyệt.
 
@@ -79,13 +80,14 @@ Mặc định staff có support.manage, reviews.read, inventory.read, orders.man
 
 ## Kiểm thử
 
-Unit/API contract tests không cần DB:
+Unit/API contract tests không cần PostgreSQL (58 passed, 11 bài tích hợp bỏ qua khi chưa bật DB test):
 
 ```bash
 python -m pytest -q
+python -m app.verify_postgres_checkout
 ```
 
-Các bài integration tự bỏ qua nếu chưa bật RUN_PG_TESTS. Để chạy đầy đủ, tạo **DB riêng có tên kết thúc `_test`**, import schema vào DB rỗng. Tests sẽ TRUNCATE toàn bộ bảng public trong DB test mỗi bài, không chạy vào dữ liệu thật.
+`app.verify_postgres_checkout` tạo DB tạm từ cấu trúc DB hiện tại, chạy ba bài kiểm thử checkout thực trên PostgreSQL rồi dọn DB tạm. Cần quyền CREATE DATABASE. Các bài integration còn lại tự bỏ qua nếu chưa bật RUN_PG_TESTS. Để chạy đầy đủ, tạo **DB riêng có tên kết thúc `_test`**, import schema vào DB rỗng và chạy migration. Tests sẽ TRUNCATE toàn bộ bảng public trong DB test mỗi bài, không chạy vào dữ liệu thật.
 
 ```bash
 createdb -h localhost -U freedom freedom_test

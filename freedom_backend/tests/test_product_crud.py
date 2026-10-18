@@ -16,6 +16,9 @@ def product_db(monkeypatch):
     m=MetaData()
     Table('categories',m,Column('id',Integer,primary_key=True),Column('name',String),Column('slug',String,unique=True),Column('parent_id',Integer),Column('is_active',Boolean,default=True))
     Table('brands',m,Column('id',Integer,primary_key=True),Column('name',String),Column('slug',String),Column('is_active',Boolean,default=True))
+    Table('sizes',m,Column('id',Integer,primary_key=True),Column('name',String,unique=True),Column('sort_order',Integer,default=0))
+    Table('colors',m,Column('id',Integer,primary_key=True),Column('name',String,unique=True))
+    Table('inventory_movements',m,Column('id',Integer,primary_key=True),Column('variant_id',Integer),Column('movement_type',String),Column('quantity_change',Integer),Column('reference_type',String),Column('reference_id',Integer),Column('note',String),Column('created_by',Integer))
     Table('products',m,Column('id',Integer,primary_key=True),Column('category_id',Integer,ForeignKey('categories.id'),nullable=False),Column('brand_id',Integer,ForeignKey('brands.id')),
           Column('name',String,nullable=False),Column('slug',String,unique=True,nullable=False),Column('description',Text),Column('material',String),Column('base_price',Numeric(15,2)),
           Column('status',String,default='draft'),Column('created_by',Integer),Column('created_at',DateTime,default=lambda:datetime.now(timezone.utc)),Column('updated_at',DateTime,default=lambda:datetime.now(timezone.utc)))
@@ -33,6 +36,8 @@ def product_db(monkeypatch):
     with engine.begin() as conn:
         conn.execute(insert(m.tables['categories']),[{'id':1,'name':'Áo','slug':'ao'},{'id':2,'name':'Quần','slug':'quan'}])
         conn.execute(insert(m.tables['brands']),{'id':1,'name':'Freedom','slug':'freedom'})
+        conn.execute(insert(m.tables['sizes']),{'id':1,'name':'M'})
+        conn.execute(insert(m.tables['colors']),{'id':1,'name':'Mặc định'})
         conn.execute(insert(m.tables['permissions']),{'id':1,'code':'catalog.manage'})
     user={'id':1,'role_id':1,'role':'admin','status':'active'}
     monkeypatch.setattr(database,'table',lambda name:m.tables[name])
