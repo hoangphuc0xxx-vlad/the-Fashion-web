@@ -1,0 +1,3 @@
+export const heroImage = 'assets/freedom-menswear-hero-v2.png';
+export const images = ['assets/photo-1713881587420-113c1c43e28a.jpg', 'assets/photo-1613053342567-924891457d16.jpg', 'assets/photo-1620834767673-19f69709a716.jpg'];
+export const endpoints = { orders: '/staff/orders', products: '/staff/catalog/products', inventory: '/staff/inventory', customers: '/staff/customers', categories: '/staff/catalog/categories', brands: '/staff/catalog/brands', coupons: '/staff/catalog/coupons', reviews: '/admin/reviews', banners: '/staff/catalog/banners', posts: '/staff/catalog/posts', returns: '/staff/returns', support: '/staff/support/tickets', users: '/admin/users', audit: '/admin/audit-logs' };

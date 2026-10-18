@@ -1,0 +1,35 @@
+﻿STT,Vai trò chuẩn hóa,Chức năng,Người phụ trách PDF1,Người làm PDF2,Module,API
+1,Admin,Dashboard quản trị,Khánh,Khánh,community,/admin/dashboard
+2,Admin,Quản lý tài khoản & phân quyền,Phúc,Phúc,people,/admin/users; /admin/roles; /admin/permissions
+3,Admin,Quản lý nhân viên,Phúc,Phúc,people,/admin/users?role=staff
+4,Admin,Quản lý khách hàng,Tuấn Anh,Tuấn Anh,people/community,/admin/users?role=customer; /staff/customers/{uid}
+5,Admin,Quản lý sản phẩm & biến thể,Dũng,Dũng,catalog,/staff/catalog/products; product_variants; product_images
+6,Admin,Danh mục & thương hiệu,Dũng,Dũng,catalog,/staff/catalog/categories; brands
+7,Admin,Quản lý kho,Khánh,Khánh,community,/staff/inventory
+8,Admin,Quản lý đơn hàng,Tuấn Anh,Tuấn Anh,commerce,/staff/orders
+9,Admin,Thanh toán & vận chuyển,Tuấn Anh,Tuấn Anh,commerce,/admin/orders/{oid}/confirm-payment; /staff/orders/{oid}/shipment
+10,Admin,Voucher / khuyến mãi,Dũng,Dũng,catalog,/staff/catalog/coupons
+11,Admin,Quản lý đánh giá,Phúc,Phúc,people,/admin/reviews
+12,Admin,Đổi trả & hoàn tiền,Khánh,Khánh,community,/staff/returns
+13,Admin,Banner & bài viết,Dũng,Dũng,catalog,/staff/catalog/banners; posts
+14,Admin,Nhật ký hoạt động,Phúc,Phúc,people,/admin/audit-logs
+15,Nhân viên,Đăng nhập & phân quyền,Phúc,Phúc,auth/security,/auth/token
+16,Nhân viên,Xử lý đơn hàng,Tuấn Anh,Tuấn Anh,commerce,/staff/orders/{oid}/status
+17,Nhân viên,Quản lý sản phẩm được giao,Dũng,Dũng,catalog,/staff/catalog/* (chưa có phạm vi giao từng người)
+18,Nhân viên,Kiểm tra kho,Khánh,Khánh,community,/staff/inventory; /staff/inventory/{vid}/adjust
+19,Nhân viên,Hỗ trợ khách hàng,Phúc,Phúc,people,/staff/support/tickets
+20,Nhân viên,Tiếp nhận đổi trả,Khánh,Khánh,community,/staff/returns/{rid}
+21,Nhân viên,Theo dõi đánh giá,Dũng,Dũng,people,/staff/reviews/{rid}/flag
+22,Khách hàng,Đăng ký / đăng nhập,Phúc,Phúc,auth,/auth/register; token; logout; forgot-password; reset-password
+23,Khách hàng,Hồ sơ & địa chỉ,Phúc,Phúc,people/auth,/me/profile; /me/addresses; /auth/password
+24,Khách hàng,Trang chủ,Dũng,Dũng,catalog,/catalog/home; /catalog/products
+25,Khách hàng,"Danh mục, tìm kiếm & lọc",Dũng,Dũng,catalog,/catalog/products; /catalog/lookups/{name}
+26,Khách hàng,Chi tiết sản phẩm,Dũng,Dũng,catalog,/catalog/products/{pid}
+27,Khách hàng,Sản phẩm yêu thích,Khánh,Khánh,community,/me/wishlist
+28,Khách hàng,Giỏ hàng,Tuấn Anh,Tuấn Anh,commerce,/me/cart; /me/cart/items
+29,Khách hàng,Đặt hàng & voucher,Tuấn Anh,Tuấn Anh,commerce,/me/checkout
+30,Khách hàng,Thanh toán,Tuấn Anh,Tuấn Anh,commerce,/me/orders/{oid} (trạng thái); checkout (phương thức)
+31,Khách hàng,Theo dõi / hủy đơn,Khánh,Khánh,commerce,/me/orders; /me/orders/{oid}/cancel
+32,Khách hàng,Đánh giá sản phẩm,Khánh,Khánh,community,/me/reviews
+33,Khách hàng,Yêu cầu đổi trả,Phúc,Không có dòng trong PDF2,community,/me/returns
+34,Khách hàng,Liên hệ / hỗ trợ,Phúc,Không có dòng trong PDF2,people,/support/tickets

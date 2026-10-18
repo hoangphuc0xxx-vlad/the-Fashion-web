@@ -1,0 +1,8 @@
+{
+  "name": "freedom-frontend",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": { "dev": "node server.mjs", "start": "node server.mjs", "check": "node --check app.js && node --check api.js && node --check access.js && node --check products.js && node --check categories.js && node --check category-banners.js && node --check storefront-content.js && node --check gallery.js && node --check verify-gallery.mjs && node --check data.js && node --check server.mjs && node --check verify.mjs", "test": "node verify.mjs" },
+  "engines": { "node": ">=18" }
+}
