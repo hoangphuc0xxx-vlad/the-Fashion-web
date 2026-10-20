@@ -200,7 +200,7 @@ function statusSelect(statuses) {
 function recordActions(row) {
   const view = `<button data-record="${row.id}" class="ad-btn" aria-label="Xem chi tiết ${esc(row.name || row.id)}">Xem</button>`;
   if (route !== 'products') return view;
-  return `<div class="product-row-actions">${view}<button class="ad-btn" data-edit-product="${row.id}">Sửa</button>${row.status !== 'archived' ? `<button class="ad-btn danger-outline" data-delete-product="${row.id}">Xóa</button>` : ''}</div>`;
+  return `<div class="product-row-actions">${view}<button class="ad-btn" data-edit-product="${row.id}">Sửa</button>${row.status !== 'archived' || profile?.role === 'admin' ? `<button class="ad-btn danger-outline" data-delete-product="${row.id}">Xóa</button>` : ''}</div>`;
 }
 function management() {
   const statuses = [...new Set(rows.map(r => r.status).filter(Boolean))];
@@ -242,7 +242,7 @@ async function adminProductDetail(id, deleting = false) {
     requireUiPermission('catalog.manage');
     const product = await api(`/staff/catalog/products/${id}`);
     requireUiPermission('catalog.manage');
-    modal(deleting ? 'Xác nhận xóa sản phẩm' : product.name, deleting ? deleteProductHtml(product) : productDetailsHtml(product));
+    modal(deleting ? 'Xác nhận xóa sản phẩm' : product.name, deleting ? deleteProductHtml(product, profile?.role === 'admin') : productDetailsHtml(product));
   } catch (e) { toast(e.message); }
 }
 async function newProductCategory(returnToProduct = true) {
@@ -531,8 +531,9 @@ document.addEventListener('submit', async e => {
     }
     if (form.id === 'delete-product-form') {
       requireUiPermission('catalog.manage');
-      await api(`/staff/catalog/products/${form.dataset.id}`, { method: 'DELETE' });
-      $('#modal').close(); statusFilter = 'not_archived'; await render(); toast('Đã xóa sản phẩm khỏi danh sách đang sử dụng.');
+      const mode = body.delete_mode || 'soft';
+      await api(`/staff/catalog/products/${form.dataset.id}?mode=${encodeURIComponent(mode)}`, { method: 'DELETE' });
+      $('#modal').close(); statusFilter = 'not_archived'; await render(); toast(mode === 'hard' ? 'Đã xóa vĩnh viễn sản phẩm.' : 'Đã xóa mềm sản phẩm. Có thể khôi phục từ danh sách lưu trữ.');
     }
     if (form.id === 'product-category-form') {
       requireUiPermission('catalog.manage');

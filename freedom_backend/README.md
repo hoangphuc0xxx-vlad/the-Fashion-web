@@ -130,3 +130,14 @@ uvicorn app.main:app --host 127.0.0.1 --port 8000 --workers 2
 Đặt tiến trình dưới systemd trong Ubuntu với WorkingDirectory là thư mục dự án, EnvironmentFile trỏ `.env`, ExecStart trỏ `.venv/bin/uvicorn`, chạy bằng user dịch vụ riêng và Restart=on-failure. Backup DB, theo dõi audit và lỗi, kiểm thử restore trước triển khai. Bộ chặn auth trong app chỉ áp dụng từng process và IP trực tiếp; cấu hình trusted proxy/IP thật cùng limiter ở reverse proxy. Dữ liệu audit có mốc logout cần giữ ít nhất đến khi token liên quan hết hạn.
 
 Frontend nằm tại `../freedom_frontend`, gồm tải ảnh đại diện sản phẩm; backend lưu ảnh theo hướng dẫn ở trên. Chưa tích hợp ngân hàng/đơn vị vận chuyển hoặc quản lý sản phẩm theo nhân viên được giao. API ảnh dạng URL vẫn nhận http/https; frontend phải xử lý nội dung HTML bài viết an toàn khi hiển thị. Không sửa database để giả lập các chức năng thiếu.
+
+
+## Xóa sản phẩm an toàn
+
+`DELETE /staff/catalog/products/{id}` mặc định dùng `?mode=soft`: đổi `status` thành `archived`, cập nhật `updated_at`, giữ nguyên biến thể, ảnh và lịch sử. Sản phẩm bị ẩn khỏi cửa hàng; có thể khôi phục bằng sửa trạng thái trong danh sách “Đã xóa / lưu trữ”.
+
+Admin có thể chọn `?mode=hard` để xóa vĩnh viễn sản phẩm nhập nhầm. API chỉ cho phép nếu mọi biến thể có tồn kho và số lượng đang giữ bằng 0, đồng thời không có tham chiếu từ `order_items`, `inventory_movements`, `cart_items`, `reviews`, `wishlists`. Khi có tham chiếu, trả HTTP 409 và yêu cầu xóa mềm; nhân viên không được xóa cứng (403). Giá trị mode không hợp lệ trả 422.
+
+Xóa cứng xóa bản ghi ảnh, biến thể rồi sản phẩm trong cùng transaction; ghi audit `hard_delete`. Không xóa đơn hàng, lịch sử kho hay nới lỏng khóa ngoại. Các tệp ảnh trên ổ đĩa được giữ lại vì URL có thể dùng chung; việc dọn tệp không thuộc thao tác này. Nếu xảy ra xung đột khóa ngoại, transaction được rollback và trả 409. Không cần migration hoặc import lại schema cho thay đổi này.
+
+Trong mã nguồn trước thay đổi, endpoint đã lưu trữ sản phẩm thay vì DELETE trực tiếp. Do đó chưa xác định được nguyên nhân PostgreSQL thực tế ngừng hoạt động nếu chưa có log từ lần lỗi; lỗi khóa ngoại thường làm thất bại transaction, không đồng nghĩa database server bị sập. Thay đổi được kiểm thử với database SQLite cô lập có bật khóa ngoại; kiểm thử PostgreSQL cần database thử nghiệm riêng, không dùng dữ liệu bán hàng thật.

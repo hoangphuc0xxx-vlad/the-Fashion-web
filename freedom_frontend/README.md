@@ -128,3 +128,8 @@ npm test
 Backend kiểm thử xác thực, phân quyền, CRUD, ảnh, size/tồn, checkout chọn dòng và xử lý đơn. Chạy `python -m pytest -q` tại `freedom_backend`: **58 passed, 11 skipped**. Ba bài PostgreSQL chạy riêng bằng `python -m app.verify_postgres_checkout` kiểm tra DB thật và xác nhận đồng thời trên DB tạm. Frontend cũng kiểm thử giỏ chọn dòng, xác nhận người nhận, đặt trước, thử lại cùng khóa và theo dõi trạng thái. `verify-gallery.mjs` kiểm tra tự chạy, hướng trượt, lặp vòng và thu hồi timer. Không chạy kiểm thử xóa dữ liệu trên DB bán hàng.
 
 Chưa kiểm chứng hiển thị desktop/mobile bằng trình duyệt tự động hóa hoặc tích hợp với PostgreSQL đang chạy. Ảnh bản lưu có độ phân giải thấp. Các giới hạn chức năng nêu trên vẫn cần hoàn thiện trước khi coi đây là toàn bộ hệ thống bán hàng đã nghiệm thu.
+
+
+### Chọn cách xóa sản phẩm
+
+Ở quản lý sản phẩm, bấm **Xóa** và chọn cách xóa trong hộp xác nhận. Mặc định **Xóa mềm** để lưu trữ và giữ lịch sử. Admin có thêm **Xóa cứng** (vĩnh viễn); backend sẽ từ chối nếu còn tồn kho, hàng đang giữ hoặc dữ liệu tham chiếu. Để xóa cứng sản phẩm đã lưu trữ, chọn bộ lọc **Đã xóa / lưu trữ**, rồi bấm **Xóa** ở dòng sản phẩm. Khôi phục sản phẩm xóa mềm bằng **Sửa**, đổi trạng thái về Bản nháp hoặc Đang bán.

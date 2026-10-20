@@ -2,7 +2,7 @@
 // Backend authorization is tested separately in tests/test_access.py.
 import assert from 'node:assert/strict';
 import { routePermissions, can, canVisit } from './access.js';
-import { slugify, productPayload, productEditorHtml, productDetailsHtml, productImageUrl, validateProductImage } from './products.js';
+import { slugify, productPayload, productEditorHtml, productDetailsHtml, productImageUrl, validateProductImage, deleteProductHtml } from './products.js';
 import { categoryHref, categoryPath, categoryNavHtml, categoryOptionsHtml, categoryFormHtml, visibleCategories } from './categories.js';
 import { categoryBannerHtml } from './category-banners.js';
 const memory = () => { const data = new Map(); return { getItem: k => data.get(k) ?? null, setItem: (k, v) => data.set(k, String(v)), removeItem: k => data.delete(k) }; };
@@ -276,3 +276,8 @@ await assert.rejects(api('/ready'), /Không kết nối được cửa hàng/);
 console.log('PASS: RBAC, product CRUD, images, selected cart checkout, recipient confirmation, pickup scheduling, retry key, remaining cart and customer order statuses. Simulated DOM/API, not browser QA.');
 await import('./verify-gallery.mjs');
 process.exit(0);
+
+assert.match(deleteProductHtml(product, true), /value="soft" selected/);
+assert.match(deleteProductHtml(product, true), /value="hard"/);
+assert.doesNotMatch(deleteProductHtml(product, false), /value="hard"/);
+assert.ok(requests.some(r => r.method === 'DELETE' && r.url.endsWith('?mode=soft')));

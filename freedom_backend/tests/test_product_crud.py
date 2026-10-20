@@ -13,12 +13,13 @@ from app.routers import catalog
 @pytest.fixture
 def product_db(monkeypatch):
     engine=create_engine('sqlite://',connect_args={'check_same_thread':False},poolclass=StaticPool)
+    with engine.connect() as conn:conn.exec_driver_sql('PRAGMA foreign_keys=ON')
     m=MetaData()
     Table('categories',m,Column('id',Integer,primary_key=True),Column('name',String),Column('slug',String,unique=True),Column('parent_id',Integer),Column('is_active',Boolean,default=True))
     Table('brands',m,Column('id',Integer,primary_key=True),Column('name',String),Column('slug',String),Column('is_active',Boolean,default=True))
     Table('sizes',m,Column('id',Integer,primary_key=True),Column('name',String,unique=True),Column('sort_order',Integer,default=0))
     Table('colors',m,Column('id',Integer,primary_key=True),Column('name',String,unique=True))
-    Table('inventory_movements',m,Column('id',Integer,primary_key=True),Column('variant_id',Integer),Column('movement_type',String),Column('quantity_change',Integer),Column('reference_type',String),Column('reference_id',Integer),Column('note',String),Column('created_by',Integer))
+    Table('inventory_movements',m,Column('id',Integer,primary_key=True),Column('variant_id',Integer,ForeignKey('product_variants.id')),Column('movement_type',String),Column('quantity_change',Integer),Column('reference_type',String),Column('reference_id',Integer),Column('note',String),Column('created_by',Integer))
     Table('products',m,Column('id',Integer,primary_key=True),Column('category_id',Integer,ForeignKey('categories.id'),nullable=False),Column('brand_id',Integer,ForeignKey('brands.id')),
           Column('name',String,nullable=False),Column('slug',String,unique=True,nullable=False),Column('description',Text),Column('material',String),Column('base_price',Numeric(15,2)),
           Column('status',String,default='draft'),Column('created_by',Integer),Column('created_at',DateTime,default=lambda:datetime.now(timezone.utc)),Column('updated_at',DateTime,default=lambda:datetime.now(timezone.utc)))
@@ -194,3 +195,65 @@ def test_published_product_is_visible_without_variants(client,product_db):
     assert len(client.get('/catalog/products?min_price=650000&max_price=750000').json())==1
     assert client.delete(f'/staff/catalog/products/{pid}').status_code==204
     assert client.get('/catalog/products').json()==[]
+
+
+@pytest.fixture
+def deletion_db(product_db):
+    engine, t, _ = product_db
+    m = t['products'].metadata
+    Table('cart_items',m,Column('id',Integer,primary_key=True),Column('variant_id',Integer,ForeignKey('product_variants.id')))
+    Table('wishlists',m,Column('user_id',Integer,primary_key=True),Column('product_id',Integer,ForeignKey('products.id'),primary_key=True))
+    m.create_all(engine)
+    return product_db
+
+
+@pytest.mark.parametrize('reference', ['order_items', 'inventory_movements', 'cart_items', 'reviews', 'wishlists', 'stock', 'reserved'])
+def test_hard_delete_refuses_referenced_or_stocked_product(client, deletion_db, reference):
+    engine, t, _ = deletion_db
+    pid = client.post('/staff/catalog/products', json=payload(status='active')).json()['id']
+    path = f'/staff/catalog/products/{pid}'
+    with engine.begin() as conn:
+        conn.execute(insert(t['product_variants']), dict(id=1, product_id=pid, sku='TEST', price=100, stock_quantity=1 if reference=='stock' else 0, reserved_quantity=1 if reference=='reserved' else 0))
+        if reference in ('order_items', 'inventory_movements', 'cart_items'):
+            conn.execute(insert(t[reference]), dict(variant_id=1))
+        elif reference=='reviews':
+            conn.execute(insert(t['reviews']), dict(product_id=pid))
+        elif reference=='wishlists':
+            conn.execute(insert(t['wishlists']), dict(user_id=1, product_id=pid))
+    assert client.delete(path+'?mode=hard').status_code==409
+    assert client.get(path).json()['status']=='active'
+    # A failed transaction must not break subsequent requests, and soft delete remains safe.
+    assert client.delete(path+'?mode=soft').status_code==204
+    assert client.get(path).json()['status']=='archived'
+    with engine.connect() as conn:
+        assert conn.scalar(select(func.count()).select_from(t['product_variants']))==1
+
+
+def test_hard_delete_empty_product_and_unused_variants(client, deletion_db):
+    engine, t, _ = deletion_db
+    for with_variant in (False, True):
+        pid = client.post('/staff/catalog/products', json=payload(slug=str(with_variant))).json()['id']
+        path = f'/staff/catalog/products/{pid}'
+        with engine.begin() as conn:
+            if with_variant:
+                conn.execute(insert(t['product_variants']), dict(product_id=pid, sku='UNUSED', price=100, stock_quantity=0, reserved_quantity=0))
+            conn.execute(insert(t['product_images']), dict(product_id=pid, image_url='/uploads/test.png'))
+        assert client.delete(path+'?mode=hard').status_code==204
+        assert client.get(path).status_code==404
+    with engine.connect() as conn:
+        for name in ('products', 'product_variants', 'product_images'):
+            assert conn.scalar(select(func.count()).select_from(t[name]))==0
+        assert conn.scalar(select(func.count()).select_from(t['audit_logs']).where(t['audit_logs'].c.action=='hard_delete'))==2
+
+
+def test_hard_delete_requires_admin_and_valid_mode(client, product_db):
+    engine, t, user = product_db
+    pid = client.post('/staff/catalog/products', json=payload()).json()['id']
+    path = f'/staff/catalog/products/{pid}'
+    assert client.delete(path+'?mode=invalid').status_code==422
+    user.update(role='staff', role_id=2)
+    with engine.begin() as conn:
+        conn.execute(insert(t['role_permissions']), dict(role_id=2, permission_id=1))
+    assert client.delete(path+'?mode=hard').status_code==403
+    assert client.get(path).json()['status']=='draft'
+    assert client.delete(path).status_code==204

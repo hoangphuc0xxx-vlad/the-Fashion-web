@@ -1,8 +1,10 @@
+from typing import Literal
 from datetime import datetime, timezone
 from decimal import Decimal
 from uuid import uuid4
 from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile
 from sqlalchemy import select, update, delete, exists, and_, or_, func
+from sqlalchemy.exc import IntegrityError
 from .. import catalog_schemas as s
 from ..db import session, table, one, add, audit
 from ..security import require
@@ -206,6 +208,39 @@ def validate(db,name,values,rid=None):
             if not ancestor['is_active']:raise HTTPException(422,'Danh mục cha đã ngừng hoạt động')
             parent=ancestor['parent_id']
 
+def hard_delete_product(db, rid, user):
+    if user['role'] != 'admin':
+        raise HTTPException(403, 'Chỉ admin được xóa cứng sản phẩm')
+    variants = table('product_variants')
+    # Serialize with variant edits and checkout before inspecting references.
+    rows = db.execute(select(variants).where(variants.c.product_id == rid)
+                      .order_by(variants.c.id).with_for_update()).mappings().all()
+    ids = [row['id'] for row in rows]
+    if any(row['stock_quantity'] or row['reserved_quantity'] for row in rows):
+        raise HTTPException(409, 'Sản phẩm còn tồn kho hoặc hàng đang giữ; hãy xóa mềm')
+    for name, column, values in (
+        ('order_items', 'variant_id', ids),
+        ('inventory_movements', 'variant_id', ids),
+        ('cart_items', 'variant_id', ids),
+        ('reviews', 'product_id', [rid]),
+        ('wishlists', 'product_id', [rid]),
+    ):
+        t = table(name)
+        if values and db.scalar(select(func.count()).select_from(t).where(t.c[column].in_(values))):
+            raise HTTPException(409, 'Sản phẩm có đơn hàng, lịch sử kho, giỏ hàng, đánh giá hoặc yêu thích; hãy xóa mềm')
+    try:
+        # Keep the outer transaction usable on an unexpected/concurrent FK conflict.
+        with db.begin_nested():
+            images = table('product_images')
+            db.execute(delete(images).where(images.c.product_id == rid))
+            db.execute(delete(variants).where(variants.c.product_id == rid))
+            products = table('products')
+            db.execute(delete(products).where(products.c.id == rid))
+    except IntegrityError as exc:
+        raise HTTPException(409, 'Sản phẩm đang được tham chiếu; hãy xóa mềm') from exc
+    audit(db, user['id'], 'hard_delete', 'products', rid)
+
+
 def mount(name,model,permission):
     def listing(limit:int=Query(50,ge=1,le=100),offset:int=Query(0,ge=0),user=Depends(require(permission)),db=Depends(session)):
         t=table(name);order=t.c.id.desc() if name=='products' else t.c.id
@@ -232,8 +267,12 @@ def mount(name,model,permission):
         t=table(name);row=db.execute(update(t).where(t.c.id==rid).values(**values).returning(t)).mappings().one()
         if name=='products':save_product_sizes(db,rid,entries,user)
         audit(db,user['id'],'update',name,rid);return row
-    def remove(rid:int,user=Depends(require(permission)),db=Depends(session)):
+    def remove(rid:int,mode:Literal['soft','hard']=Query('soft'),user=Depends(require(permission)),db=Depends(session)):
         one(db,name,rid,lock=True);t=table(name)
+        if mode=='hard':
+            if name!='products':raise HTTPException(422,'Chỉ sản phẩm hỗ trợ lựa chọn xóa cứng')
+            hard_delete_product(db,rid,user)
+            return
         if 'is_active' in t.c:db.execute(update(t).where(t.c.id==rid).values(is_active=False))
         elif 'status' in t.c:
             values={'status':'archived'}
